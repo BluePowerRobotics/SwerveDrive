@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 @TeleOp
 public class SwerveProtoType extends LinearOpMode {
     Servo servo;
@@ -25,6 +27,8 @@ public class SwerveProtoType extends LinearOpMode {
             telemetry.addData("power", power);
             motor.setPower(power);
             telemetry.addData("degree", servo.getPosition());
+            telemetry.addData("current", motor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("vel", motor.getVelocity());
             servo.setPosition((gamepad1.right_stick_x + 1) / 2);
             telemetry.update();
             if(Math.abs(gamepad1.left_stick_x) > 0.1){
