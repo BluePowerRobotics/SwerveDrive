@@ -143,8 +143,6 @@ public class SwerveController {
 @Config
 class ChassisCalculator {
     public static class Params {
-        //todo 调整参数
-        public double rb = 0.23; // rb 车轮中心到机器人中心的基本半径 (m)
         public double skP = 0.002;//speed k
         public double skI = 0;
         public double skD = 0.00025;
