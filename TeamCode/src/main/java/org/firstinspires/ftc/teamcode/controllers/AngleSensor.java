@@ -13,7 +13,7 @@ public class AngleSensor {
     }
     AnalogInput analogInput;
     public double getVoltage(){
-        return analogInput.getMaxVoltage();
+        return analogInput.getVoltage();
     }
     public double getRadian(){
         return MathSolver.normalizeAngle((getVoltage()-ZeroDegreeVoltage)/3.3*Math.PI*2);
