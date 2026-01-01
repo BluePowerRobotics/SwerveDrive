@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialW
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 public class SwerveDrive {
-    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),1,0);
-    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(1,1),1,0);
-    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-1,-1),1,0);
-    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(1,-1),1,0);
+    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),1,0, Servo.Direction.FORWARD);
+    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(1,1),1,0, Servo.Direction.FORWARD);
+    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-1,-1),1,0, Servo.Direction.FORWARD);
+    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(1,-1),1,0, Servo.Direction.FORWARD);
     public SwerveController swerveController;
     public SwerveDrive(HardwareMap hardwareMap){
         swerveController = new SwerveController(hardwareMap,

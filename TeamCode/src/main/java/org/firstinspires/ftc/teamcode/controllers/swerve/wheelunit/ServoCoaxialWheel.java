@@ -22,6 +22,8 @@ public class ServoCoaxialWheel implements WheelUnit{
         this.motor = dcMotor;
         this.servo = servo;
         this.angleSensor=angleSensor;
+        this.motor.setDirection(DcMotorEx.Direction.FORWARD);
+        this.servo.setDirection(config.servoDirection);
     }
     @Override
     public void setSpeed(double speed) {
