@@ -11,10 +11,18 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialW
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 public class SwerveDrive {
-    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),1,0, Servo.Direction.FORWARD);
-    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(1,1),1,0, Servo.Direction.FORWARD);
-    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-1,-1),1,0, Servo.Direction.FORWARD);
-    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(1,-1),1,0, Servo.Direction.FORWARD);
+    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),
+            0, Servo.Direction.FORWARD, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,63.5);
+    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(1,1),
+            0, Servo.Direction.FORWARD, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,63.5);
+    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-1,-1),
+            0, Servo.Direction.FORWARD, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,63.5);
+    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(1,-1),
+            0, Servo.Direction.FORWARD, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,63.5);
     public SwerveController swerveController;
     public SwerveDrive(HardwareMap hardwareMap){
         swerveController = new SwerveController(hardwareMap,
