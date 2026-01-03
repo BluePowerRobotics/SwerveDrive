@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.controllers.swerve;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.LazyHardwareMapImu;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
+import com.acmerobotics.roadrunner.ftc.LynxFirmware;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,13 +19,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
+import org.firstinspires.ftc.teamcode.RoadRunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheelConfig;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
+
+import java.util.LinkedList;
+
 @Config
 public class SwerveDrive {
     public static class Params{
@@ -43,7 +52,15 @@ public class SwerveDrive {
             2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
     public SwerveController swerveController;
     public final LazyImu lazyImu;
+    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     public SwerveDrive(HardwareMap hardwareMap){
+        LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+
         swerveController = new SwerveController(
                 new DriveLocalizer(Data.getInstance().getPose2d()),
                 new ServoCoaxialWheel(leftFront,
@@ -73,6 +90,39 @@ public class SwerveDrive {
         );
         lazyImu =  new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+    }
+    public void setDrivePowers(PoseVelocity2d powers) {
+        swerveController.gamepadInput(-powers.linearVel.y, powers.linearVel.x, powers.angVel);
+    }
+    public PoseVelocity2d updatePoseEstimate() {
+        PoseVelocity2d vel = RobotPosition.getInstance().localizer.update();
+        poseHistory.add(RobotPosition.getInstance().getData().getPose2d());
+
+        while (poseHistory.size() > 100) {
+            poseHistory.removeFirst();
+        }
+
+        estimatedPoseWriter.write(new PoseMessage(RobotPosition.getInstance().getData().getPose2d()));
+
+
+        return vel;
+    }
+
+    private void drawPoseHistory(Canvas c) {
+        double[] xPoints = new double[poseHistory.size()];
+        double[] yPoints = new double[poseHistory.size()];
+
+        int i = 0;
+        for (Pose2d t : poseHistory) {
+            xPoints[i] = t.position.x;
+            yPoints[i] = t.position.y;
+
+            i++;
+        }
+
+        c.setStrokeWidth(1);
+        c.setStroke("#3F51B5");
+        c.strokePolyline(xPoints, yPoints);
     }
     public class DriveLocalizer implements Localizer{
         private Point2D position;
@@ -118,4 +168,5 @@ public class SwerveDrive {
             return new PoseVelocity2d(new Vector2d(avgSpeed.getY(),-avgSpeed.getX()),imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate);
         }
     }
+
 }
