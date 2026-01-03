@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
+import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 public class RobotPosition {
@@ -31,40 +33,20 @@ public class RobotPosition {
         return instance;
     }
     /**
-    * 初始化位置(全新)
+    * 初始化位置
     * @param hardwareMap 硬件映射
-     * @param initialPosition 初始位置(inch)
-     * @param initialHeadingRadian 初始朝向，弧度制
+     * @param localizer 定位器
     * @return RobotPosition实例
      */
-    public static RobotPosition refresh(HardwareMap hardwareMap,Point2D initialPosition,double initialHeadingRadian){
+    public static RobotPosition refresh(HardwareMap hardwareMap,Localizer localizer){
+        Point2D initialPosition=MathSolver.toPoint2D(localizer.getPose());
+        double initialHeadingRadian=localizer.getPose().heading.toDouble();
         instance=new RobotPosition(hardwareMap);
         instance.initialPosition=initialPosition;
         instance.initialHeadingRadian=initialHeadingRadian;
         Data.instance.setPosition(initialPosition);
         Data.instance.headingRadian=initialHeadingRadian;
-        instance.localizer = new PinpointLocalizer(hardwareMap,Params.inPerTick, new Pose2d(-Data.instance.getPosition(DistanceUnit.INCH).getY(), +Data.instance.getPosition(DistanceUnit.INCH).getX(), Data.instance.headingRadian));
-        return instance;
-    }
-    /**
-     * 初始化位置(全新)
-     * @param hardwareMap 硬件映射
-     * @param pose2d 初始位置(roadrunner方向)
-     * @return RobotPosition实例
-     */
-    public static RobotPosition refresh(HardwareMap hardwareMap, Pose2d pose2d) {
-        return refresh(hardwareMap, new Point2D(-pose2d.position.y, pose2d.position.x), pose2d.heading.log());
-    }
-    /**
-     * 初始化位置(旧位置)
-     * @param hardwareMap 硬件映射
-     * @return RobotPosition实例
-     */
-    public static RobotPosition refresh(HardwareMap hardwareMap){
-        instance=new RobotPosition(hardwareMap);
-        instance.initialPosition= Data.instance.getPosition(DistanceUnit.INCH);
-        instance.initialHeadingRadian= Data.instance.headingRadian;
-        instance.localizer = new PinpointLocalizer(hardwareMap, Params.inPerTick,Data.getInstance().getPose2d());
+        instance.localizer = localizer;
         return instance;
     }
 

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheelConfig;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
@@ -44,6 +45,7 @@ public class SwerveDrive {
     public final LazyImu lazyImu;
     public SwerveDrive(HardwareMap hardwareMap){
         swerveController = new SwerveController(hardwareMap,
+                new DriveLocalizer(Data.getInstance().getPose2d()),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,"leftFront"),
                         hardwareMap.get(Servo.class,"leftFront"),

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
 public class SwerveController {
-    public SwerveController(HardwareMap hardwareMap,WheelUnit... wheelUnits) {
-        robotPosition= RobotPosition.refresh(hardwareMap);
+    public SwerveController(HardwareMap hardwareMap, Localizer localizer, WheelUnit... wheelUnits) {
+        robotPosition= RobotPosition.refresh(hardwareMap,localizer);
         this.wheelUnits = wheelUnits;
         this.hardwareMap=hardwareMap;
         HeadingLockRadian = robotPosition.getData().headingRadian;
@@ -82,7 +83,7 @@ public class SwerveController {
     }
 
     public void resetPosition(Pose2d pose2d) {
-        robotPosition = RobotPosition.refresh(hardwareMap, pose2d);
+        RobotPosition.getInstance().localizer.setPose(pose2d);
     }
 
     Point2D targetPoint = new Point2D(0, 0);
