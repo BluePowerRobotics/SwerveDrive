@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.controllers.swerve;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
@@ -16,10 +13,9 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
 public class SwerveController {
-    public SwerveController(HardwareMap hardwareMap, Localizer localizer, WheelUnit... wheelUnits) {
-        robotPosition= RobotPosition.refresh(hardwareMap,localizer);
+    public SwerveController(Localizer localizer, WheelUnit... wheelUnits) {
+        robotPosition= RobotPosition.refresh(localizer);
         this.wheelUnits = wheelUnits;
-        this.hardwareMap=hardwareMap;
         HeadingLockRadian = robotPosition.getData().headingRadian;
         noHeadModeStartError=robotPosition.getData().headingRadian;
     }
@@ -36,7 +32,6 @@ public class SwerveController {
 
     public static Params PARAMS = new Params();
     public RobotPosition robotPosition;
-    HardwareMap hardwareMap;
     boolean fullyAutoMode = false;
     boolean useNoHeadMode = false;
     public boolean runningToPoint = false;
@@ -203,7 +198,7 @@ class ChassisCalculator {
     boolean firstRunXY = true;
     double thisTimeHeadingRadian = 0;
     AngleMeanFilter meanFilter = new AngleMeanFilter(10);
-    Point2D lastcurrent = new Point2D(0, 0);
+    Point2D lastCurrent = new Point2D(0, 0);
 
     public double[] calculatePIDXY(Point2D target, Point2D current) {
         double errorX = target.getX() - current.getX();
@@ -215,11 +210,11 @@ class ChassisCalculator {
             lastTimeXY = System.nanoTime();
             pidSpeed.reset();
             pidSpeedHeading.reset();
-            lastcurrent = current;
+            lastCurrent = current;
             meanFilter.reset();
         }
-        thisTimeHeadingRadian = meanFilter.filter(Point2D.translate(current, Point2D.rotate(lastcurrent, Math.PI)).getRadian());
-        lastcurrent = current;
+        thisTimeHeadingRadian = meanFilter.filter(Point2D.translate(current, Point2D.rotate(lastCurrent, Math.PI)).getRadian());
+        lastCurrent = current;
         pidSpeed.setPID(PARAMS.skP, PARAMS.skI, PARAMS.skD);
         pidSpeedHeading.setPID(PARAMS.hkP, PARAMS.hkI, PARAMS.hkD);
         double headingError = MathSolver.normalizeAngle(angleToTarget - thisTimeHeadingRadian);

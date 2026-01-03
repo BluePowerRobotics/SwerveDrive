@@ -1,27 +1,20 @@
 package org.firstinspires.ftc.teamcode.controllers.swerve.locate;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
-import org.firstinspires.ftc.teamcode.RoadRunner.PinpointLocalizer;
-import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 @Config
 public class RobotPosition {
     public static class Params {
-        static double inPerTick = 0.001999;
         static int minUpdateIntervalMs = 1; // 最小更新时间间隔，单位毫秒
 
     }
-    public void setMinUpdateIntervalMs(@NonNull int interval){
+    public void setMinUpdateIntervalMs(int interval){
         Params.minUpdateIntervalMs=interval;
     }
 
@@ -34,14 +27,13 @@ public class RobotPosition {
     }
     /**
     * 初始化位置
-    * @param hardwareMap 硬件映射
      * @param localizer 定位器
     * @return RobotPosition实例
      */
-    public static RobotPosition refresh(HardwareMap hardwareMap,Localizer localizer){
+    public static RobotPosition refresh(Localizer localizer){
         Point2D initialPosition=MathSolver.toPoint2D(localizer.getPose());
         double initialHeadingRadian=localizer.getPose().heading.toDouble();
-        instance=new RobotPosition(hardwareMap);
+        instance=new RobotPosition();
         instance.initialPosition=initialPosition;
         instance.initialHeadingRadian=initialHeadingRadian;
         Data.instance.setPosition(initialPosition);
@@ -50,11 +42,8 @@ public class RobotPosition {
         return instance;
     }
 
-    private RobotPosition(HardwareMap hardwareMap){
-        this.hardwareMap=hardwareMap;
-        }
+    private RobotPosition(){}
 
-    private HardwareMap hardwareMap;
     public Localizer localizer;
     public Point2D initialPosition=new Point2D(0,0);
     public double initialHeadingRadian=0;

@@ -44,7 +44,7 @@ public class SwerveDrive {
     public SwerveController swerveController;
     public final LazyImu lazyImu;
     public SwerveDrive(HardwareMap hardwareMap){
-        swerveController = new SwerveController(hardwareMap,
+        swerveController = new SwerveController(
                 new DriveLocalizer(Data.getInstance().getPose2d()),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,"leftFront"),
@@ -79,7 +79,7 @@ public class SwerveDrive {
         private double headingRadian;
         private double startRadian;
         public final IMU imu;
-        private WheelUnit[] wheelUnits;
+        private final WheelUnit[] wheelUnits;
         public DriveLocalizer(Pose2d initialPose){
             imu = lazyImu.get();
             position = MathSolver.toPoint2D(initialPose);
