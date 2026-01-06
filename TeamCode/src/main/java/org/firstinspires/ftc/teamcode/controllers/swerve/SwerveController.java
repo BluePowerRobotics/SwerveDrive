@@ -13,11 +13,10 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
 public class SwerveController {
+    boolean firstRun = true;
     public SwerveController(Localizer localizer, WheelUnit... wheelUnits) {
         robotPosition= RobotPosition.refresh(localizer);
         this.wheelUnits = wheelUnits;
-        HeadingLockRadian = robotPosition.getData().headingRadian;
-        noHeadModeStartError=robotPosition.getData().headingRadian;
     }
 
 
@@ -38,7 +37,7 @@ public class SwerveController {
     boolean autoLockHeading = true;
     boolean HeadingLockRadianReset = true;
     double HeadingLockRadian;
-    WheelUnit[] wheelUnits;
+    public WheelUnit[] wheelUnits;
 
     public double getHeadingLockRadian() {
         return HeadingLockRadian;
@@ -85,6 +84,11 @@ public class SwerveController {
     double targetRadian = 0;
 
     public void gamepadInput(double vx, double vy, double omega) {
+        if(firstRun){
+            HeadingLockRadian = robotPosition.getData().headingRadian;
+            noHeadModeStartError=robotPosition.getData().headingRadian;
+            firstRun = false;
+        }
         vx = vx * PARAMS.maxV;
         vy = vy * PARAMS.maxV;
         omega = omega * PARAMS.maxOmega;

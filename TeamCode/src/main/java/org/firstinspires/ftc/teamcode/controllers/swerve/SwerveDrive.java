@@ -60,36 +60,35 @@ public class SwerveDrive {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
+        lazyImu =  new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         swerveController = new SwerveController(
                 new DriveLocalizer(Data.getInstance().getPose2d()),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,"leftFront"),
-                        hardwareMap.get(Servo.class,"leftFront"),
+                        hardwareMap.get(Servo.class,"leftFrontServo"),
                         new AngleSensor(
-                                hardwareMap,"leftFront",0
+                                hardwareMap,"leftFrontAnalog",0
                         )),
                 new ServoCoaxialWheel(rightFront,
                         hardwareMap.get(DcMotorEx.class,"rightFront"),
-                        hardwareMap.get(Servo.class,"rightFront"),
+                        hardwareMap.get(Servo.class,"rightFrontServo"),
                         new AngleSensor(
-                                hardwareMap,"rightFront",0
+                                hardwareMap,"rightFrontAnalog",0
                         )),
                 new ServoCoaxialWheel(leftBack,
                         hardwareMap.get(DcMotorEx.class,"leftBack"),
-                        hardwareMap.get(Servo.class,"leftBack"),
+                        hardwareMap.get(Servo.class,"leftBackServo"),
                         new AngleSensor(
-                                hardwareMap,"leftBack",0
+                                hardwareMap,"leftBackAnalog",0
                         )),
                 new ServoCoaxialWheel(rightBack,
                         hardwareMap.get(DcMotorEx.class,"rightBack"),
-                        hardwareMap.get(Servo.class,"rightBack"),
+                        hardwareMap.get(Servo.class,"rightBackServo"),
                         new AngleSensor(
-                                hardwareMap,"rightBack",0
+                                hardwareMap,"rightBackAnalog",0
                         ))
         );
-        lazyImu =  new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
     }
     public void setDrivePowers(PoseVelocity2d powers) {
         swerveController.gamepadInput(-powers.linearVel.y, powers.linearVel.x, powers.angVel);
@@ -129,13 +128,11 @@ public class SwerveDrive {
         private double headingRadian;
         private double startRadian;
         public final IMU imu;
-        private final WheelUnit[] wheelUnits;
         public DriveLocalizer(Pose2d initialPose){
             imu = lazyImu.get();
             position = MathSolver.toPoint2D(initialPose);
             startRadian = initialPose.heading.log();
             headingRadian = startRadian;
-            wheelUnits = swerveController.wheelUnits;
             lastUpdateTime = System.nanoTime();
         }
         @Override
@@ -157,10 +154,10 @@ public class SwerveDrive {
             headingRadian = MathSolver.normalizeAngle(imuRadian+startRadian);
             double radian = MathSolver.normalizeAngle(headingRadian+Math.PI/2);
             Point2D total = Point2D.ZERO;
-            for(WheelUnit wheelUnit:wheelUnits){
+            for(WheelUnit wheelUnit:swerveController.wheelUnits){
                 total = Point2D.translate(total,Point2D.fromPolar(wheelUnit.getHeading(),wheelUnit.getSpeed()));
             }
-            Point2D avgSpeed = Point2D.scale(total,1.0/wheelUnits.length);
+            Point2D avgSpeed = Point2D.scale(total,1.0/swerveController.wheelUnits.length);
             long nowTime = System.nanoTime();
             Point2D avgMove = Point2D.scale(avgSpeed,(nowTime-lastUpdateTime)/1e9);
             lastUpdateTime = nowTime;
