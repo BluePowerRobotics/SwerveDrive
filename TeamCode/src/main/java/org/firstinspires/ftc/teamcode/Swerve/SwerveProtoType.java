@@ -2,44 +2,23 @@ package org.firstinspires.ftc.teamcode.Swerve;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 
 @TeleOp
 public class SwerveProtoType extends LinearOpMode {
-    Servo servo;
-    DcMotorEx motor;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo = hardwareMap.get(Servo.class, "servo");
-        servo.setDirection(Servo.Direction.FORWARD);
-        motor = hardwareMap.get(DcMotorEx.class, "motor");
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
         waitForStart();
-        double power = 0;
         while(opModeIsActive()){
-            telemetry.addData("power", power);
-            motor.setPower(power);
-            telemetry.addData("degree", servo.getPosition());
-            telemetry.addData("current", motor.getCurrent(CurrentUnit.AMPS));
-            telemetry.addData("vel", motor.getVelocity());
-            servo.setPosition((gamepad1.right_stick_x + 1) / 2);
+            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
+            for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
+                telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
+                telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
+            }
             telemetry.update();
-            if(Math.abs(gamepad1.left_stick_x) > 0.1){
-                power = gamepad1.left_stick_x;
-            }
-            if(gamepad1.aWasPressed()){
-                power += 0.1;
-            }
-            if(gamepad1.bWasPressed()){
-                power -= 0.1;
-            }
         }
     }
 }
