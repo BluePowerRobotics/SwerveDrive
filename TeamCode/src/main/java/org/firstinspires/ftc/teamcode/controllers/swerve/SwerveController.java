@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
+import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
@@ -128,11 +129,12 @@ public class SwerveController {
                         omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robotPosition.getData().headingRadian);
                     }
                 }
-                for(WheelUnit wheelUnit: wheelUnits){
+                for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
+                    WheelUnit wheelUnit = wheelUnits[i];
                     if (useNoHeadMode)
-                        chassisCalculator.solveGround(wheelUnit,vx, vy, omega, robotPosition.getData().headingRadian - noHeadModeStartError);
+                        chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
                     else
-                        chassisCalculator.solveChassis(wheelUnit,vx, vy, omega);
+                        chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
                     wheelUnit.update();
                 }
             }
@@ -174,9 +176,13 @@ class ChassisCalculator {
      * @param vy    机器人相对于自身的前进速度 (m/s) —— +前
      * @param omega 机器人旋转角速度 (rad/s) —— +逆时针
      */
-    public void solveChassis(WheelUnit wheelUnit,double vx, double vy, double omega) {
-        wheelUnit.setHeading(Math.atan2(vy-omega*wheelUnit.getPosition().getX(), vx+omega*wheelUnit.getPosition().getY()));
-        wheelUnit.setSpeed(Math.hypot(vx + omega * wheelUnit.getPosition().getY(), vy - omega * wheelUnit.getPosition().getX()));
+    public void solveChassis(WheelUnit wheelUnit,double vx, double vy, double omega,int index) {
+        double heading = Math.atan2(vy-omega*wheelUnit.getPosition().getX(), vx+omega*wheelUnit.getPosition().getY());
+        double speed = Math.hypot(vx + omega * wheelUnit.getPosition().getY(), vy - omega * wheelUnit.getPosition().getX());
+        wheelUnit.setHeading(heading);
+        wheelUnit.setSpeed(speed);
+        InstanceTelemetry.getTelemetry().addData(index+"targetHeading",heading);
+        InstanceTelemetry.getTelemetry().addData(index+"targetSpeed",speed);
     }
 
     /**
@@ -187,15 +193,15 @@ class ChassisCalculator {
      * @param omega         机器人旋转角速度 (rad/s) —— +逆时针
      * @param headingRadian 机器人朝向，弧度制
      */
-    public void solveGround(WheelUnit wheelUnit,double vx, double vy, double omega, double headingRadian) {
+    public void solveGround(WheelUnit wheelUnit,double vx, double vy, double omega, double headingRadian,int index) {
 
         double vxPro = vx * Math.cos(headingRadian) + vy * Math.sin(headingRadian);
         double vyPro = -vx * Math.sin(headingRadian) + vy * Math.cos(headingRadian);
-        solveChassis(wheelUnit,vxPro, vyPro, omega);
+        solveChassis(wheelUnit,vxPro, vyPro, omega,index);
     }
 
-    public void solveGround(WheelUnit wheelUnit,double[] vxy, double vOmega, double headingRadian) {
-        solveGround(wheelUnit,vxy[0], vxy[1], vOmega, headingRadian);
+    public void solveGround(WheelUnit wheelUnit,double[] vxy, double vOmega, double headingRadian,int index) {
+        solveGround(wheelUnit,vxy[0], vxy[1], vOmega, headingRadian,index);
     }
 
     long lastTimeXY = 0;

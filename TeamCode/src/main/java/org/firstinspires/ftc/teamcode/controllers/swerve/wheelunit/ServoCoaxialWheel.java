@@ -94,7 +94,7 @@ public class ServoCoaxialWheel implements WheelUnit{
         }else{
             motorVelocity = getAngularVelocity()*config.motorToTurntableTimes*config.motorGearRatio*(28.0/* tick / cycle *//(2*Math.PI));
         }
-        servo.setPosition(servoPID.calculate(0,MathSolver.normalizeAngle(targetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
+        servo.setPosition(0.5+servoPID.calculate(0,MathSolver.normalizeAngle(targetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
         motor.setVelocity(motorVelocity);
         lastUpdateTime=System.nanoTime();
     }
