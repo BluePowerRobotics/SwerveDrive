@@ -84,17 +84,25 @@ public class ServoCoaxialWheel implements WheelUnit{
     public void update() {
         servoPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
         double motorVelocity;
+        Point2D calculatedTargetHeading;
         if(targetSpeed!=0) {
             Point2D now = Point2D.fromPolar(getHeading(), targetSpeed);
             if(Point2D.dot(now,targetHeading)<0){
-                targetHeading=Point2D.scale(targetHeading,-1);
+                calculatedTargetHeading=Point2D.scale(targetHeading,-1);
+            }else{
+                calculatedTargetHeading = new Point2D(targetHeading);
             }
-            Point2D target = Point2D.scale(targetHeading, Point2D.dot(now, targetHeading));
-            motorVelocity = (target.getDistance()/config.wheelDiameter*2*config.turntableToWheelTimes+getAngularVelocity())*config.motorToTurntableTimes*config.motorGearRatio*(28.0/* tick / cycle *//(2*Math.PI));
+            motorVelocity = (Point2D.dot(now, targetHeading)/config.wheelDiameter*2*config.turntableToWheelTimes+getAngularVelocity())*config.motorToTurntableTimes*config.motorGearRatio*(28.0/* tick / cycle *//(2*Math.PI));
         }else{
+            Point2D now = Point2D.fromPolar(getHeading(), targetSpeed);
+            if(Point2D.dot(now,targetHeading)<0){
+                calculatedTargetHeading = Point2D.scale(Point2D.fromPolar(getPosition().getRadian(),1),-1);
+            }else{
+                calculatedTargetHeading = Point2D.fromPolar(getPosition().getRadian(),1);
+            }
             motorVelocity = getAngularVelocity()*config.motorToTurntableTimes*config.motorGearRatio*(28.0/* tick / cycle *//(2*Math.PI));
         }
-        servo.setPosition(0.5+servoPID.calculate(0,MathSolver.normalizeAngle(targetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
+        servo.setPosition(0.5+servoPID.calculate   (0,MathSolver.normalizeAngle(calculatedTargetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
         motor.setVelocity(motorVelocity);
         lastUpdateTime=System.nanoTime();
     }
