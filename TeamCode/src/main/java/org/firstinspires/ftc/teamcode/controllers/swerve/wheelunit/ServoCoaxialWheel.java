@@ -14,7 +14,7 @@ public class ServoCoaxialWheel implements WheelUnit{
     public static class Params {
         public double sp=1;
         public double si=0;
-        public double sd=0.1;
+        public double sd=0;
     }
     public static Params PARAMS = new Params();
     ServoCoaxialWheelConfig config;
