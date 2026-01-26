@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
+import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
+import org.firstinspires.ftc.teamcode.utility.SVAController;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
@@ -15,6 +17,12 @@ public class ServoCoaxialWheel implements WheelUnit{
         public double sp=1;
         public double si=0;
         public double sd=0;
+        public double mp=0.0;
+        public double mi=0;
+        public double md=0.0;
+        public double kS=0;
+        public double kV=0;
+        public double kA=0;
     }
     public static Params PARAMS = new Params();
     ServoCoaxialWheelConfig config;
@@ -23,6 +31,8 @@ public class ServoCoaxialWheel implements WheelUnit{
     AngleSensor angleSensor;
     MeanFilter angularVelocityFilter = new MeanFilter(5);
     PIDController servoPID;
+    PIDController motorPID;
+    SVAController motorSVA;
 
     @Override
     public Point2D getPosition() {
@@ -40,6 +50,8 @@ public class ServoCoaxialWheel implements WheelUnit{
         lastTime = System.nanoTime();
         targetHeading = Point2D.fromPolar(config.wheelPosition.getRadian(), 1);
         servoPID = new PIDController(PARAMS.sp, PARAMS.si, PARAMS.sd);
+        motorPID = new PIDController(PARAMS.mp, PARAMS.mi, PARAMS.md);
+        motorSVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
     }
     private double targetSpeed=0;
     @Override
@@ -83,6 +95,8 @@ public class ServoCoaxialWheel implements WheelUnit{
     @Override
     public void update() {
         servoPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
+        motorPID.setPID(PARAMS.mp, PARAMS.mi, PARAMS.md);
+        motorSVA.setSVA(PARAMS.kS, PARAMS.kV, PARAMS.kA);
         double motorVelocity;
         Point2D calculatedTargetHeading;
         if(targetSpeed!=0) {
@@ -103,7 +117,9 @@ public class ServoCoaxialWheel implements WheelUnit{
             motorVelocity = getAngularVelocity()*config.motorToTurntableTimes*config.motorGearRatio*(28.0/* tick / cycle *//(2*Math.PI));
         }
         servo.setPosition(0.5+servoPID.calculate   (0,MathSolver.normalizeAngle(calculatedTargetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
-        motor.setVelocity(motorVelocity);
+        double pidPower = motorPID.calculate(motorVelocity, motor.getVelocity(), (System.nanoTime() - lastUpdateTime)/1e9);
+        double svaPower = motorSVA.calculate(motorVelocity, (motor.getVelocity()-motorVelocity)/((System.nanoTime() - lastUpdateTime)/1e9));
+        motor.setPower((svaPower + pidPower)/ SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
     }
 }
