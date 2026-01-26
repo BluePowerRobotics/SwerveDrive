@@ -36,8 +36,10 @@ public class SwerveDrive {
     public static class Params{
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+        
     }
     public static Params PARAMS = new Params();
+
     public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),
             0, Servo.Direction.FORWARD, ServoCoaxialWheelConfig.AngleSenSorDirection.REVERSE,
             2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
@@ -64,6 +66,7 @@ public class SwerveDrive {
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         swerveController = new SwerveController(
                 new DriveLocalizer(Data.getInstance().getPose2d()),
+                hardwareMap.voltageSensor.iterator().next(),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,"leftFront"),
                         hardwareMap.get(Servo.class,"leftFrontServo"),

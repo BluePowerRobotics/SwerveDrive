@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.controllers.swerve;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
@@ -15,8 +16,9 @@ import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
 public class SwerveController {
     boolean firstRun = true;
-    public SwerveController(Localizer localizer, WheelUnit... wheelUnits) {
+    public SwerveController(Localizer localizer,VoltageSensor voltageSensor, WheelUnit... wheelUnits) {
         robotPosition= RobotPosition.refresh(localizer);
+        this.voltageSensor = voltageSensor;
         this.wheelUnits = wheelUnits;
     }
 
@@ -39,6 +41,11 @@ public class SwerveController {
     boolean HeadingLockRadianReset = true;
     double HeadingLockRadian;
     public WheelUnit[] wheelUnits;
+    private VoltageSensor voltageSensor;
+    static double voltage = 12.0;
+    public static double getVoltage() {
+        return voltage;
+    }
 
     public double getHeadingLockRadian() {
         return HeadingLockRadian;
@@ -85,6 +92,7 @@ public class SwerveController {
     double targetRadian = 0;
 
     public void gamepadInput(double vx, double vy, double omega) {
+        voltage = voltageSensor.getVoltage();
         if(firstRun){
             HeadingLockRadian = robotPosition.getData().headingRadian;
             noHeadModeStartError=robotPosition.getData().headingRadian;
