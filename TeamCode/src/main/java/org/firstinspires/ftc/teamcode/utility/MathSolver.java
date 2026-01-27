@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.utility;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
+import java.util.List;
+
 public class MathSolver {
     private static final double EPSILON = 1e-10; // 误差容限
     public static double sgn(double n){return Math.abs(n)/n;}
@@ -273,6 +275,66 @@ y_2
     public static Point2D toPoint2D(Pose2d pose2d){
         Point2D rotation = new Point2D(pose2d.position.x,pose2d.position.y);
         return Point2D.rotate(rotation,Math.toRadians(90));
+    }
+    /**
+     * 用最小二乘法拟合直线
+     * @param points 数据点列表
+     * @return 拟合的直线
+     * @throws IllegalArgumentException 如果数据点不足2个
+     */
+    public static Line fitLine(List<Point2D> points) {
+        if (points == null || points.size() < 2) {
+            throw new IllegalArgumentException("至少需要2个数据点");
+        }
+
+        int n = points.size();
+        double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+
+        // 计算各项和
+        for (Point2D point : points) {
+            double x = point.getX();
+            double y = point.getY();
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumX2 += x * x;
+            sumY2 += y * y;
+        }
+
+        // 计算平均值
+        double meanX = sumX / n;
+        double meanY = sumY / n;
+
+        // 计算斜率和截距
+        double numerator = 0, denominator = 0;
+        for (Point2D point : points) {
+            double x = point.getX();
+            double y = point.getY();
+            numerator += (x - meanX) * (y - meanY);
+            denominator += (x - meanX) * (x - meanX);
+        }
+
+        // 如果所有x值相同，直线垂直，斜率无穷大
+        if (Math.abs(denominator) < 1e-10) {
+            return new Line(Double.POSITIVE_INFINITY, Double.NaN, 0);
+        }
+
+        double slope = numerator / denominator;
+        double intercept = meanY - slope * meanX;
+
+        // 计算R²
+        double ssTotal = 0, ssResidual = 0;
+        for (Point2D point : points) {
+            double x = point.getX();
+            double y = point.getY();
+            double predicted = slope * x + intercept;
+            ssTotal += Math.pow(y - meanY, 2);
+            ssResidual += Math.pow(y - predicted, 2);
+        }
+
+        double rSquared = 1 - (ssResidual / ssTotal);
+
+        return new Line(slope, intercept, rSquared);
     }
 
 }
