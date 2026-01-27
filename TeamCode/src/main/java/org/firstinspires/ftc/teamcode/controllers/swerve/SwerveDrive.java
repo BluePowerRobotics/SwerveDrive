@@ -36,7 +36,7 @@ public class SwerveDrive {
     public static class Params{
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-        
+        public String[] unitNames = {"leftFront","rightFront","leftBack","rightBack"};
     }
     public static Params PARAMS = new Params();
 
@@ -68,28 +68,28 @@ public class SwerveDrive {
                 new DriveLocalizer(Data.getInstance().getPose2d()),
                 hardwareMap.voltageSensor.iterator().next(),
                 new ServoCoaxialWheel(leftFront,
-                        hardwareMap.get(DcMotorEx.class,"leftFront"),
-                        hardwareMap.get(Servo.class,"leftFrontServo"),
+                        hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
+                        hardwareMap.get(Servo.class,PARAMS.unitNames[0]+"Servo"),
                         new AngleSensor(
-                                hardwareMap,"leftFrontAnalog",0
+                                hardwareMap,PARAMS.unitNames[0]+"Analog",0
                         )),
                 new ServoCoaxialWheel(rightFront,
-                        hardwareMap.get(DcMotorEx.class,"rightFront"),
-                        hardwareMap.get(Servo.class,"rightFrontServo"),
+                        hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[1]),
+                        hardwareMap.get(Servo.class,PARAMS.unitNames[1]+"Servo"),
                         new AngleSensor(
-                                hardwareMap,"rightFrontAnalog",0
+                                hardwareMap,PARAMS.unitNames[1]+"Analog",0
                         )),
                 new ServoCoaxialWheel(leftBack,
-                        hardwareMap.get(DcMotorEx.class,"leftBack"),
-                        hardwareMap.get(Servo.class,"leftBackServo"),
+                        hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[2]),
+                        hardwareMap.get(Servo.class,PARAMS.unitNames[2]+"Servo"),
                         new AngleSensor(
-                                hardwareMap,"leftBackAnalog",0
+                                hardwareMap,PARAMS.unitNames[2]+"Analog",0
                         )),
                 new ServoCoaxialWheel(rightBack,
-                        hardwareMap.get(DcMotorEx.class,"rightBack"),
-                        hardwareMap.get(Servo.class,"rightBackServo"),
+                        hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[3]),
+                        hardwareMap.get(Servo.class,PARAMS.unitNames[3]+"Servo"),
                         new AngleSensor(
-                                hardwareMap,"rightBackAnalog",0
+                                hardwareMap,PARAMS.unitNames[3]+"Analog",0
                         ))
         );
     }
