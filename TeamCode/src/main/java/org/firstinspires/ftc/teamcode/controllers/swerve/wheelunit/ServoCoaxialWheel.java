@@ -118,7 +118,7 @@ public class ServoCoaxialWheel implements WheelUnit{
         }
         servo.setPosition(0.5+servoPID.calculate   (0,MathSolver.normalizeAngle(calculatedTargetHeading.getRadian()-getHeading()), (System.nanoTime() - lastUpdateTime)/1e9));
         double pidPower = motorPID.calculate(motorVelocity, motor.getVelocity(), (System.nanoTime() - lastUpdateTime)/1e9);
-        double svaPower = motorSVA.calculate(motorVelocity, (motor.getVelocity()-motorVelocity)/((System.nanoTime() - lastUpdateTime)/1e9));
+        double svaPower = motorSVA.calculate(motorVelocity, (motorVelocity-motor.getVelocity())/((System.nanoTime() - lastUpdateTime)/1e9));
         motor.setPower((svaPower + pidPower)/ SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
     }
