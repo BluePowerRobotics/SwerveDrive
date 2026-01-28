@@ -105,9 +105,12 @@ public class ServoCoaxialWheel implements WheelUnit{
         targetVector = vector;
     }
     private Point2D targetTranslation = new Point2D(0,0),targetRotation = new Point2D(0,0);
+    private Point2D lastTranslation = new Point2D(0,0),lastRotation = new Point2D(0,0);
     @Override
     public void setVector(Point2D translation, Point2D rotation) {
         inputMethod = InputMethod.TRANSLATION_ROTATION;
+        lastTranslation = new Point2D(targetTranslation);
+        lastRotation = new Point2D(targetRotation);
         targetTranslation = translation;
         targetRotation = rotation;
     }
@@ -205,12 +208,10 @@ public class ServoCoaxialWheel implements WheelUnit{
         servo.setPosition(0.5 + servoPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9));
         double pidPower = motorPID.calculate(motorVelocity, motor.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
         double svaPower = motorSVA.calculate(motorVelocity, K_kA*(motorVelocity - motor.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
-        double rotationVelocity = Point2D.dot(Point2D.fromPolar(getHeading(), motor.getVelocity()), Point2D.fromPolar(getPosition().getRadian() + Math.PI / 2, 1))/* /1 */;
-        double rotationAcceleration = (targetRotation.getDistance()-rotationVelocity) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        double times = motor.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
+        double rotationAcceleration = (targetRotation.getDistance()-times*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower += K_kJ * PARAMS.kJ * rotationAcceleration;
-        Point2D rotationVector = Point2D.fromPolar(getHeading() + Math.PI / 2, rotationVelocity);
-        double translationVelocity = Point2D.translate(Point2D.fromPolar(getHeading(), motor.getVelocity()), Point2D.rotate(rotationVector, Math.PI)).getDistance();
-        double translationAcceleration = (targetTranslation.getDistance()-translationVelocity) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        double translationAcceleration = (targetTranslation.getDistance()-times*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower += K_kM * PARAMS.kM * translationAcceleration;
         motor.setPower((svaPower + pidPower) / SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
