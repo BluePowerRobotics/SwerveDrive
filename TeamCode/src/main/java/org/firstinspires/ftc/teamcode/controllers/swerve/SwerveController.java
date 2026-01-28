@@ -185,6 +185,8 @@ class ChassisCalculator {
      * @param omega 机器人旋转角速度 (rad/s) —— +逆时针
      */
     public void solveChassis(WheelUnit wheelUnit,double vx, double vy, double omega,int index) {
+        Point2D translation = new Point2D(vx,vy);
+        Point2D rotation = Point2D.fromPolar(Math.atan2(wheelUnit.getPosition().getY(),wheelUnit.getPosition().getX())+Math.PI/2,omega*wheelUnit.getPosition().getDistance());
         double heading = Math.atan2(vy-omega*wheelUnit.getPosition().getX(), vx+omega*wheelUnit.getPosition().getY());
         double speed = Math.hypot(vx + omega * wheelUnit.getPosition().getY(), vy - omega * wheelUnit.getPosition().getX());
         wheelUnit.setHeading(heading);

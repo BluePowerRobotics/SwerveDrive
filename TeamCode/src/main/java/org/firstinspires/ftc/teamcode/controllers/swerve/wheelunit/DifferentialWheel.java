@@ -29,6 +29,21 @@ public class DifferentialWheel implements WheelUnit{
     }
 
     @Override
+    public void setPower(double power) {
+
+    }
+
+    @Override
+    public void setVector(Point2D vector) {
+
+    }
+
+    @Override
+    public void setVector(Point2D translation, Point2D rotation) {
+
+    }
+
+    @Override
     public double getSpeed() {
         return 0;
     }
