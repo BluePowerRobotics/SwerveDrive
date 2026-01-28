@@ -216,4 +216,9 @@ public class ServoCoaxialWheel implements WheelUnit{
         motor.setPower((svaPower + pidPower) / SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
     }
+    @Override
+    public void stop(){
+        motor.setPower(0);
+        servo.setPosition(0.5);
+    }
 }

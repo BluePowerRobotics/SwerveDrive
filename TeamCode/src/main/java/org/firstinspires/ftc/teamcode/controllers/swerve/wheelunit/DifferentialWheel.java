@@ -57,4 +57,9 @@ public class DifferentialWheel implements WheelUnit{
     public void update() {
 
     }
+    @Override
+    public void stop() {
+        motor1.setPower(0);
+        motor2.setPower(0);
+    }
 }

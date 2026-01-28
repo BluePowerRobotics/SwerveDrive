@@ -12,4 +12,5 @@ public interface WheelUnit {
     public double getSpeed();
     public double getHeading();
     public void update();
+    public void stop();
 }
