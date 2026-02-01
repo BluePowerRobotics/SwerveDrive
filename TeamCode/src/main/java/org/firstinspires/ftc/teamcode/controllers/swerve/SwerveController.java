@@ -41,7 +41,7 @@ public class SwerveController {
     boolean HeadingLockRadianReset = true;
     double HeadingLockRadian;
     public WheelUnit[] wheelUnits;
-    private VoltageSensor voltageSensor;
+    public VoltageSensor voltageSensor;
     static double voltage = 12.0;
     public static double getVoltage() {
         return voltage;
@@ -186,13 +186,11 @@ class ChassisCalculator {
      */
     public void solveChassis(WheelUnit wheelUnit,double vx, double vy, double omega,int index) {
         Point2D translation = new Point2D(vx,vy);
-        Point2D rotation = Point2D.fromPolar(Math.atan2(wheelUnit.getPosition().getY(),wheelUnit.getPosition().getX())+Math.PI/2,omega*wheelUnit.getPosition().getDistance());
-        double heading = Math.atan2(vy-omega*wheelUnit.getPosition().getX(), vx+omega*wheelUnit.getPosition().getY());
-        double speed = Math.hypot(vx + omega * wheelUnit.getPosition().getY(), vy - omega * wheelUnit.getPosition().getX());
-        wheelUnit.setHeading(heading);
-        wheelUnit.setSpeed(speed);
-        InstanceTelemetry.getTelemetry().addData(index+"targetHeading",heading);
-        InstanceTelemetry.getTelemetry().addData(index+"targetSpeed",speed);
+        Point2D rotation = new Point2D(-omega * omega*wheelUnit.getPosition().getY(), omega * wheelUnit.getPosition().getX());
+        wheelUnit.setVector(translation, rotation);
+        Point2D vector = Point2D.translate(translation, rotation);
+        InstanceTelemetry.getTelemetry().addData(index+"targetHeading",vector.getRadian());
+        InstanceTelemetry.getTelemetry().addData(index+"targetSpeed",vector.getDistance());
     }
 
     /**
