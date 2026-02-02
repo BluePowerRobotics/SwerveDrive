@@ -21,7 +21,7 @@ public class MeanFilter {
      * - 在缓冲填满后，作为滑动窗口：减去最旧值，加入新值，再返回 sum / windowSize。
      */
     public double filter(double newValue) {
-        if(!Double.isNaN(newValue)&&Double.isFinite(newValue)) {
+        if (!Double.isNaN(newValue) && Double.isFinite(newValue)) {
             if (count < windowSize) {
                 // 缓冲未满：直接追加
                 buffer[index] = newValue;
@@ -37,12 +37,14 @@ public class MeanFilter {
                 index = (index + 1) % windowSize;
                 return sum / windowSize;
             }
-        }else{
+        } else {
             return getMean();
         }
     }
 
-    /** 重置滤波器（清空历史样本） */
+    /**
+     * 重置滤波器（清空历史样本）
+     */
     public void reset() {
         for (int i = 0; i < windowSize; i++) buffer[i] = 0.0;
         index = 0;
@@ -50,12 +52,34 @@ public class MeanFilter {
         sum = 0.0;
     }
 
-    /** 不添加样本，直接返回当前均值（尚未有样本时返回 0.0） */
+    /**
+     * 不添加样本，直接返回当前均值（尚未有样本时返回 0.0）
+     */
     public double getMean() {
         if (count == 0) return 0.0;
         return sum / count;
     }
 
-    public int getCount() { return count; }
-    public int getWindowSize() { return windowSize; }
+    public int getCount() {
+        return count;
+    }
+
+    public int getWindowSize() {
+        return windowSize;
+    }
+
+    /**
+     * 获得当前方差s^2
+     *
+     * @return 方差
+     */
+    public double getVariance() {
+        if (count == 0) return 0.0;
+        double mean = getMean();
+        double varianceSum = 0.0;
+        for (int i = 0; i < count; i++) {
+            varianceSum += Math.pow(buffer[i] - mean, 2);
+        }
+        return varianceSum / count;
+    }
 }
