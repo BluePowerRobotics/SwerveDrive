@@ -49,6 +49,11 @@ public class DifferentialWheel implements WheelUnit{
     }
 
     @Override
+    public double getVelocityInTPS() {
+        return 0;
+    }
+
+    @Override
     public double getHeading() {
         return 0;
     }

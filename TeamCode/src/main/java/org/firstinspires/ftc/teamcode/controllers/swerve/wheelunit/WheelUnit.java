@@ -10,6 +10,7 @@ public interface WheelUnit {
     public void setVector(Point2D vector);
     public void setVector(Point2D translation, Point2D rotation);
     public double getSpeed();
+    public double getVelocityInTPS();
     public double getHeading();
     public void update();
     public void stop();

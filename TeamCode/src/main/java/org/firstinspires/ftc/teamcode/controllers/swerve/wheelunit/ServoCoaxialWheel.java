@@ -133,6 +133,11 @@ public class ServoCoaxialWheel implements WheelUnit{
     }
 
     @Override
+    public double getVelocityInTPS() {
+        return motor.getVelocity();
+    }
+
+    @Override
     public double getHeading() {
         switch (config.angleSenSorDirection) {
             case FORWARD:
