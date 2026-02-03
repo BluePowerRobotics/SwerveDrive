@@ -21,8 +21,8 @@ set "SCRIPT_DIR=%~dp0"
 echo script dir: %SCRIPT_DIR%
 
 
-mklink /D %SCRIPT_DIR%/RoadRunner %SCRIPT_DIR%/../road-runner-ftc/RoadRunner
-mklink /D %SCRIPT_DIR%/road-runner-actions %SCRIPT_DIR%/../road-runner/road-runner/actions
-mklink /D %SCRIPT_DIR%/road-runner-core %SCRIPT_DIR%/../road-runner/road-runner/core
-mklink /D %SCRIPT_DIR%/FtcDashboard %SCRIPT_DIR%/../ftc-dashboard/FtcDashboard
-mklink /D %SCRIPT_DIR%/DashboardCore %SCRIPT_DIR%/../ftc-dashboard/DashboardCore
+mklink /D "%SCRIPT_DIR%RoadRunner\src" "%SCRIPT_DIR%..\road-runner-ftc\RoadRunner\src"
+mklink /D "%SCRIPT_DIR%road-runner-actions\src" "%SCRIPT_DIR%..\road-runner\road-runner\actions\src"
+mklink /D "%SCRIPT_DIR%road-runner-core\src" "%SCRIPT_DIR%..\road-runner\road-runner\core\src"
+mklink /D "%SCRIPT_DIR%FtcDashboard\src" "%SCRIPT_DIR%..\ftc-dashboard\FtcDashboard\src"
+mklink /D "%SCRIPT_DIR%DashboardCore\src" "%SCRIPT_DIR%..\ftc-dashboard\DashboardCore\src"
