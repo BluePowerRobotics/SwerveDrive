@@ -82,3 +82,9 @@ lint/tmp/
 
 .DS_Store
 /.idea
+
+DashboardCore/src
+FtcDashboard/src
+road-runner-core/src
+road-runner-actions/src
+RoadRunner/src
