@@ -1,12 +1,16 @@
-# Road Runner Quickstart
+# Swerve Drive
 
-Check out the [docs](https://rr.brott.dev/docs/v1-0/tuning/).
+Check out the [road runner docs](https://rr.brott.dev/docs/v1-0/tuning/).
 
-to build everything by yourself, see the [Downloader of Swerve](https://github.com/BluePowerRobotics/Swerve)
+## Build
 
-then, follow the instructions in the README of the Downloader.
+Suggested way is to download dependences from maven. Gradle will do everything. Just use Android Studio to open this repo.
 
-after that, you should:
+To build everything by yourself, see the [Downloader of Swerve](https://github.com/BluePowerRobotics/Swerve).
+
+Then, follow the instructions in the README of the Downloader.
+
+After that, you should:
 
 - remove `//` in line 8~10,19 in build.gradle
 - remove `//` in line 3~7     in settings.gradle
