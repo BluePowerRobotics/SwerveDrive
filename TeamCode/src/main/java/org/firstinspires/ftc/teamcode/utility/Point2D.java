@@ -294,5 +294,8 @@ public class Point2D {
     public static Point2D cross(Point2D p1, Point2D p2) {
         return new Point2D(p1.x * p2.y - p1.y * p2.x, p1.y * p2.x - p1.x * p2.y);
     }
+    public static double angleBetween(Point2D target, Point2D p){
+        return MathSolver.normalizeAngle(target.getRadian()-p.getRadian());
+    }
 }
 
