@@ -8,3 +8,7 @@ ln -s "../../road-runner/road-runner/actions/src/" "./road-runner-actions/src" &
 ln -s "../../ftc-dashboard/FtcDashboard/src/" "./FtcDashboard/src" &&
 
 ln -s "../../ftc-dashboard/DashboardCore/src/" "./DashboardCore/src" &&
+
+ln -s "../ftc-dashboard/client/" "./client" &&
+
+ln -s "../ftc-dashboard/config/" "./config" &&

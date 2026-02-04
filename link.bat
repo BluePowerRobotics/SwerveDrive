@@ -26,3 +26,5 @@ mklink /D "%SCRIPT_DIR%road-runner-actions\src" "%SCRIPT_DIR%..\road-runner\road
 mklink /D "%SCRIPT_DIR%road-runner-core\src" "%SCRIPT_DIR%..\road-runner\road-runner\core\src"
 mklink /D "%SCRIPT_DIR%FtcDashboard\src" "%SCRIPT_DIR%..\ftc-dashboard\FtcDashboard\src"
 mklink /D "%SCRIPT_DIR%DashboardCore\src" "%SCRIPT_DIR%..\ftc-dashboard\DashboardCore\src"
+mklink /D "%SCRIPT_DIR%client" "%SCRIPT_DIR%..\ftc-dashboard\client"
+mklink /D "%SCRIPT_DIR%config" "%SCRIPT_DIR%..\ftc-dashboard\config"
