@@ -49,6 +49,7 @@ import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialW
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
+import org.firstinspires.ftc.teamcode.utility.SwerveWheelVelConstraint;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -86,7 +87,7 @@ public class SwerveDrive {
             PARAMS.maxAngVel, -PARAMS.maxAngAccel, PARAMS.maxAngAccel);
     public final VelConstraint defaultVelConstraint =
             new MinVelConstraint(Arrays.asList(
-                    new com.acmerobotics.roadrunner.MecanumKinematics(leftFront.wheelPosition.getDistance()*2).new WheelVelConstraint(PARAMS.maxWheelVel),
+                    new SwerveWheelVelConstraint(PARAMS.maxWheelVel),
                     new AngularVelConstraint(PARAMS.maxAngVel)
             ));
     public final AccelConstraint defaultAccelConstraint =
@@ -263,6 +264,11 @@ public class SwerveDrive {
                         allStopped = false;
                     }
                 }
+                if(allStopped){
+                    for (WheelUnit wheelUnit : swerveController.wheelUnits) {
+                        wheelUnit.stop();
+                    }
+                }
                 return !allStopped;
             }
 
@@ -342,6 +348,11 @@ public class SwerveDrive {
                 for (WheelUnit wheelUnit : swerveController.wheelUnits) {
                     if (Math.abs(wheelUnit.getHeading()-wheelUnit.getPosition().getRadian()) > 0.05) {
                         allStopped = false;
+                    }
+                }
+                if(allStopped){
+                    for (WheelUnit wheelUnit : swerveController.wheelUnits) {
+                        wheelUnit.stop();
                     }
                 }
                 return !allStopped;
