@@ -63,7 +63,7 @@ public class ServoCoaxialWheel implements WheelUnit{
 
     @Override
     public Point2D getPosition() {
-        return config.wheelPosition;
+        return new Point2D(config.wheelPosition);
     }
 
     public ServoCoaxialWheel(ServoCoaxialWheelConfig servoCoaxialWheelConfig, DcMotorEx dcMotor, Servo servo, AngleSensor angleSensor){
