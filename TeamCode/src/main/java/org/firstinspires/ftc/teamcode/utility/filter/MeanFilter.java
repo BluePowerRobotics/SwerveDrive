@@ -69,7 +69,7 @@ public class MeanFilter {
     }
 
     /**
-     * 获得当前方差s^2
+     * 获得当前方差σ^2
      *
      * @return 方差
      */

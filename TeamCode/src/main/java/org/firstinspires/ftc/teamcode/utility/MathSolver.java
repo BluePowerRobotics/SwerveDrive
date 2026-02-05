@@ -336,5 +336,20 @@ y_2
 
         return new Line(slope, intercept, rSquared);
     }
-
+    public static double avg(double... doubles){
+        if (doubles.length == 0) return 0.0;
+        double sum = 0;
+        for (double aDouble : doubles) {
+            sum += aDouble;
+        }
+        return sum / doubles.length;
+    }
+    public static double avg(Number... numbers){
+        if (numbers.length == 0) return 0.0;
+        double sum = 0;
+        for (Number aDouble : numbers) {
+            sum = sum + (double) aDouble;
+        }
+        return sum / numbers.length;
+    }
 }
