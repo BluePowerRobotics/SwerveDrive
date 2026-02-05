@@ -13,34 +13,54 @@ public class DifferentialWheel implements WheelUnit{
         this.motor2=motor2;
         this.config=config;
     }
+    enum InputMethod{
+        SPEED_HEADING,
+        POWER_HEADING,
+        VECTOR,
+        TRANSLATION_ROTATION
+    }
+    InputMethod inputMethod = InputMethod.SPEED_HEADING;
+    private double targetSpeed =0;
+    private double targetPower = 0;
+    private Point2D targetHeading = new Point2D(0,0);
+    private Point2D targetVector = new Point2D(0,0);
+    private Point2D targetRotation = new Point2D(0,0), lastRotation = new Point2D(0,0);
+    private Point2D targetTranslation = new Point2D(0,0), lastTranslation = new Point2D(0,0);
     @Override
     public Point2D getPosition() {
-        return null;
+        return new Point2D(config.wheelPosition);
     }
 
     @Override
     public void setSpeed(double speed) {
-
+        inputMethod = InputMethod.SPEED_HEADING;
+        this.targetSpeed = speed;
     }
 
     @Override
     public void setHeading(double heading) {
-
+        this.targetHeading = Point2D.fromPolar(heading,1);
     }
 
     @Override
     public void setPower(double power) {
-
+        inputMethod = InputMethod.POWER_HEADING;
+        this.targetPower = power;
     }
 
     @Override
     public void setVector(Point2D vector) {
-
+        inputMethod = InputMethod.VECTOR;
+        this.targetVector = vector;
     }
 
     @Override
     public void setVector(Point2D translation, Point2D rotation) {
-
+        inputMethod = InputMethod.TRANSLATION_ROTATION;
+        this.lastRotation = new Point2D(this.targetRotation);
+        this.lastTranslation = new Point2D(this.targetTranslation);
+        this.targetRotation = rotation;
+        this.targetTranslation = translation;
     }
 
     @Override
