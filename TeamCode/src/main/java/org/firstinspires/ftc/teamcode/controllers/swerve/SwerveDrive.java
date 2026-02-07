@@ -113,7 +113,7 @@ public class SwerveDrive {
     public final LazyImu lazyImu;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
-    public SwerveDrive(HardwareMap hardwareMap){
+    public SwerveDrive(HardwareMap hardwareMap, Pose2d initialPose){
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -122,7 +122,7 @@ public class SwerveDrive {
         lazyImu =  new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         swerveController = new SwerveController(
-                new DriveLocalizer(Data.getInstance().getPose2d()),
+                new DriveLocalizer(initialPose),
                 hardwareMap.voltageSensor.iterator().next(),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
@@ -149,6 +149,9 @@ public class SwerveDrive {
                                 hardwareMap,PARAMS.unitNames[3]+"Analog",0
                         )).setPARAMS(rightBackParams)
         );
+    }
+    public SwerveDrive(HardwareMap hardwareMap){
+        this(hardwareMap,Data.getInstance().getPose2d());
     }
     public void setDrivePowers(PoseVelocity2d powers) {
         swerveController.gamepadInput(-powers.linearVel.y, powers.linearVel.x, powers.angVel);
