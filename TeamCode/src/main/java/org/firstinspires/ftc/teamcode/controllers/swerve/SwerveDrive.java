@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -113,7 +114,9 @@ public class SwerveDrive {
     public final LazyImu lazyImu;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
+    private VoltageSensor voltageSensor;
     public SwerveDrive(HardwareMap hardwareMap, Pose2d initialPose){
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -122,8 +125,9 @@ public class SwerveDrive {
         lazyImu =  new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         swerveController = new SwerveController(
+                this,
                 new DriveLocalizer(initialPose),
-                hardwareMap.voltageSensor.iterator().next(),
+                () -> voltageSensor.getVoltage(),
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[0]+"Servo"),
@@ -260,7 +264,7 @@ public class SwerveDrive {
             }
 
             if (t >= timeTrajectory.duration) {
-                swerveController.gamepadInput(0,0,0);
+                swerveController.autoInput(0,0,0);
                 boolean allStopped = true;
                 for (WheelUnit wheelUnit : swerveController.wheelUnits) {
                     if (Math.abs(wheelUnit.getHeading()-wheelUnit.getPosition().getRadian()) > 0.05) {
@@ -290,7 +294,7 @@ public class SwerveDrive {
 
 
 
-            swerveController.gamepadInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
+            swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
             p.put("x", RobotPosition.getInstance().getData().getPose2d().position.x);
             p.put("y", RobotPosition.getInstance().getData().getPose2d().position.y);
@@ -346,7 +350,7 @@ public class SwerveDrive {
             }
 
             if (t >= turn.duration) {
-                swerveController.gamepadInput(0,0,0);
+                swerveController.autoInput(0,0,0);
                 boolean allStopped = true;
                 for (WheelUnit wheelUnit : swerveController.wheelUnits) {
                     if (Math.abs(wheelUnit.getHeading()-wheelUnit.getPosition().getRadian()) > 0.05) {
@@ -371,7 +375,7 @@ public class SwerveDrive {
             )
                     .compute(txWorldTarget, RobotPosition.getInstance().getData().getPose2d(), robotVelRobot);
 
-            swerveController.gamepadInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
+            swerveController.autoInput(-command.linearVel.y.get(0), command.linearVel.x.get(0), command.angVel.get(0));
 
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);

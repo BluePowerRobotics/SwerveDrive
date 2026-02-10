@@ -2,27 +2,35 @@ package org.firstinspires.ftc.teamcode.controllers.swerve;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
+import org.firstinspires.ftc.teamcode.utility.ActionRunner;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 import org.firstinspires.ftc.teamcode.utility.PIDController;
 import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
+import java.util.function.Supplier;
+
 public class SwerveController {
-    boolean firstRun = true;
-    public SwerveController(Localizer localizer,VoltageSensor voltageSensor, WheelUnit... wheelUnits) {
+    public SwerveController(SwerveDrive swerveDrive,Localizer localizer, Supplier<Double> getVoltage, WheelUnit... wheelUnits) {
+        this.swerveDrive = swerveDrive;
         robotPosition= RobotPosition.refresh(localizer);
-        this.voltageSensor = voltageSensor;
+        this.voltageSupplier = getVoltage;
         this.wheelUnits = wheelUnits;
+        HeadingLockRadian = robotPosition.getData().headingRadian;
+        noHeadModeStartError=robotPosition.getData().headingRadian;
     }
 
-
+    public enum AutoMode{
+        PID,
+        ROADRUNNER
+    }
     public static class Params {
         //todo 调整参数
         public double maxV = 0.5; // 最大线速度 (m/s)
@@ -30,10 +38,12 @@ public class SwerveController {
         public double maxOmega = Math.PI * 1 / 2; // 最大角速度 (rad/s)
         public double zeroThresholdV = 0.05; // 速度零点阈值 (m/s)
         public double zeroThresholdOmega = Math.toRadians(0.5); // 角速度零点阈值 (rad/s)
+        public AutoMode autoMode = AutoMode.PID;
     }
 
     public static Params PARAMS = new Params();
     public RobotPosition robotPosition;
+    private SwerveDrive swerveDrive;
     boolean fullyAutoMode = false;
     boolean useNoHeadMode = false;
     public boolean runningToPoint = false;
@@ -41,7 +51,8 @@ public class SwerveController {
     boolean HeadingLockRadianReset = true;
     double HeadingLockRadian;
     public WheelUnit[] wheelUnits;
-    public VoltageSensor voltageSensor;
+    Supplier<Double> voltageSupplier;
+    public ActionRunner actionRunner=new ActionRunner();
     static double voltage = 12.0;
     public static double getVoltage() {
         return voltage;
@@ -71,17 +82,28 @@ public class SwerveController {
     }
 
     public void resetNoHeadModeStartError() {
-        resetNoHeadModeStartError(0);
+        resetNoHeadModeStartError(RobotPosition.getInstance().getData().headingRadian);
     }
 
     public void setHeadingLockRadian(double headingLockRadian) {
         this.HeadingLockRadian = MathSolver.normalizeAngle(headingLockRadian);
     }
 
-    public void setTargetPoint(Pose2d pose2d) {
+    public void setPIDTargetPoint(Pose2d pose2d) {
         runningToPoint = true;
         HeadingLockRadian = pose2d.heading.log();
-        //todo autorun code
+        targetPoint = MathSolver.toPoint2D(pose2d);
+        PARAMS.autoMode = AutoMode.PID;
+    }
+    public void setRoadRunnerTargetPoint(Pose2d pose2d) {
+        runningToPoint = true;
+        HeadingLockRadian = pose2d.heading.log();
+        targetPoint = MathSolver.toPoint2D(pose2d);
+        PARAMS.autoMode = AutoMode.ROADRUNNER;
+        TrajectoryActionBuilder actionBuilder = swerveDrive.actionBuilder(robotPosition.getData().getPose2d())
+                .strafeToLinearHeading(pose2d.position,pose2d.heading);
+        actionRunner.clear();
+        actionRunner.add(actionBuilder.build());
     }
 
     public void resetPosition(Pose2d pose2d) {
@@ -92,60 +114,85 @@ public class SwerveController {
     double targetRadian = 0;
 
     public void gamepadInput(double vx, double vy, double omega) {
-        voltage = voltageSensor.getVoltage();
-        if(firstRun){
-            HeadingLockRadian = robotPosition.getData().headingRadian;
-            noHeadModeStartError=robotPosition.getData().headingRadian;
-            firstRun = false;
-        }
+        voltage = voltageSupplier.get();
         vx = vx * PARAMS.maxV;
         vy = vy * PARAMS.maxV;
-        omega = omega * PARAMS.maxOmega;
-        if (!fullyAutoMode) {
-            if (runningToPoint) {
-                if (Math.abs(Math.hypot(vx, vy)) >= PARAMS.zeroThresholdV || Math.abs(omega) >= PARAMS.zeroThresholdOmega) {
-                    runningToPoint = false;//打断自动驾驶
-                } else {
-                    //todo autorun code
-//                    if(targetPoint==null){
-//                        targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
-//                    }
-//                    if(Double.isNaN(targetRadian)){
-//                        if(HeadingLockRadianReset) {
-//                            targetRadian = robotPosition.getData().headingRadian;
-//                        }else{
-//                            targetRadian=HeadingLockRadian;
-//                        }
-//                    }
-//                    wheelSpeeds = chassisCalculator.solveGround(chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM)),
-//                            chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian),robotPosition.getData().headingRadian );
+    omega = omega * PARAMS.maxOmega;
+        if (runningToPoint) {
+            if (Math.abs(Math.hypot(vx, vy)) >= PARAMS.zeroThresholdV || Math.abs(omega) >= PARAMS.zeroThresholdOmega) {
+                runningToPoint = false;//打断自动驾驶
+            } else {
+                //todo autorun code
+                if(targetPoint==null){
+                    targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
                 }
-            }
-            if (!runningToPoint) {
-                if (autoLockHeading) {
-                    if (omega != 0) {
-                        HeadingLockRadianReset = true;
-                    } else {
-                        if (HeadingLockRadianReset) {
-                            HeadingLockRadianReset = false;
-                            chassisCalculator.firstRunRadian = true;
-                            HeadingLockRadian = robotPosition.getData().headingRadian;
-                        }
-                        if (Math.abs(robotPosition.getData().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
-                            chassisCalculator.pidRadian.reset();
-                        }
-                        omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robotPosition.getData().headingRadian);
+                if(Double.isNaN(targetRadian)){
+                    if(HeadingLockRadianReset) {
+                        targetRadian = robotPosition.getData().headingRadian;
+                    }else{
+                        targetRadian=HeadingLockRadian;
                     }
                 }
+                double[] Vxy = chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM));
+                double VOmega = chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian);
                 for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
                     WheelUnit wheelUnit = wheelUnits[i];
-                    if (useNoHeadMode)
-                        chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
-                    else
-                        chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
+                    chassisCalculator.solveGround(wheelUnit, Vxy, VOmega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
                     wheelUnit.update();
                 }
             }
+        }
+        if (!runningToPoint) {
+            if (autoLockHeading) {
+                if (omega != 0) {
+                    HeadingLockRadianReset = true;
+                } else {
+                    if (HeadingLockRadianReset) {
+                        HeadingLockRadianReset = false;
+                        chassisCalculator.firstRunRadian = true;
+                        HeadingLockRadian = robotPosition.getData().headingRadian;
+                    }
+                    if (Math.abs(robotPosition.getData().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
+                        chassisCalculator.pidRadian.reset();
+                    }
+                    omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robotPosition.getData().headingRadian);
+                }
+            }
+            for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
+                WheelUnit wheelUnit = wheelUnits[i];
+                if (useNoHeadMode)
+                    chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
+                else
+                    chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
+                wheelUnit.update();
+            }
+        }
+
+    }
+    public void autoInput(double vx, double vy, double omega) {
+        voltage = voltageSupplier.get();
+        if (autoLockHeading) {
+            if (omega != 0) {
+                HeadingLockRadianReset = true;
+            } else {
+                if (HeadingLockRadianReset) {
+                    HeadingLockRadianReset = false;
+                    chassisCalculator.firstRunRadian = true;
+                    HeadingLockRadian = robotPosition.getData().headingRadian;
+                }
+                if (Math.abs(robotPosition.getData().headingRadian - HeadingLockRadian) <= PARAMS.zeroThresholdOmega) {
+                    chassisCalculator.pidRadian.reset();
+                }
+                omega = chassisCalculator.calculatePIDRadian(HeadingLockRadian, robotPosition.getData().headingRadian);
+            }
+        }
+        for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
+            WheelUnit wheelUnit = wheelUnits[i];
+            if (useNoHeadMode)
+                chassisCalculator.solveGround(wheelUnit, vx, vy, omega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
+            else
+                chassisCalculator.solveChassis(wheelUnit, vx, vy, omega,i);
+            wheelUnit.update();
         }
     }
 }
