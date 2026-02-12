@@ -123,22 +123,31 @@ public class SwerveController {
                 runningToPoint = false;//打断自动驾驶
             } else {
                 //todo autorun code
-                if(targetPoint==null){
-                    targetPoint=robotPosition.getData().getPosition(DistanceUnit.MM);
-                }
-                if(Double.isNaN(targetRadian)){
-                    if(HeadingLockRadianReset) {
-                        targetRadian = robotPosition.getData().headingRadian;
-                    }else{
-                        targetRadian=HeadingLockRadian;
-                    }
-                }
-                double[] Vxy = chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM));
-                double VOmega = chassisCalculator.calculatePIDRadian(targetRadian,robotPosition.getData().headingRadian);
-                for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
-                    WheelUnit wheelUnit = wheelUnits[i];
-                    chassisCalculator.solveGround(wheelUnit, Vxy, VOmega, robotPosition.getData().headingRadian - noHeadModeStartError,i);
-                    wheelUnit.update();
+                switch (PARAMS.autoMode) {
+                    case ROADRUNNER:
+                        actionRunner.update();
+                        if (!actionRunner.isBusy()) {
+                            runningToPoint = false;
+                        }
+                        break;
+                    case PID:
+                        if (targetPoint == null) {
+                            targetPoint = robotPosition.getData().getPosition(DistanceUnit.MM);
+                        }
+                        if (Double.isNaN(targetRadian)) {
+                            if (HeadingLockRadianReset) {
+                                targetRadian = robotPosition.getData().headingRadian;
+                            } else {
+                                targetRadian = HeadingLockRadian;
+                            }
+                        }
+                        double[] Vxy = chassisCalculator.calculatePIDXY(targetPoint, robotPosition.getData().getPosition(DistanceUnit.MM));
+                        double VOmega = chassisCalculator.calculatePIDRadian(targetRadian, robotPosition.getData().headingRadian);
+                        for (int i = 0, wheelUnitsLength = wheelUnits.length; i < wheelUnitsLength; i++) {
+                            WheelUnit wheelUnit = wheelUnits[i];
+                            chassisCalculator.solveGround(wheelUnit, Vxy, VOmega, robotPosition.getData().headingRadian - noHeadModeStartError, i);
+                            wheelUnit.update();
+                        }
                 }
             }
         }
