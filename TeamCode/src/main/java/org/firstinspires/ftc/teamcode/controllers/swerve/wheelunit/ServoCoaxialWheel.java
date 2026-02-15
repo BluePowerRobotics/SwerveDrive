@@ -134,7 +134,7 @@ public class ServoCoaxialWheel implements WheelUnit{
 
     @Override
     public double getVelocityInTPS() {
-        return motor.getVelocity();
+        return Math.abs(motor.getVelocity());
     }
 
     @Override
