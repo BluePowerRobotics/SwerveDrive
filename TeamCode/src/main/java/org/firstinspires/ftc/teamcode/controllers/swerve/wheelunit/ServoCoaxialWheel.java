@@ -214,9 +214,11 @@ public class ServoCoaxialWheel implements WheelUnit{
         double pidPower = motorPID.calculate(motorVelocity, motor.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
         double svaPower = motorSVA.calculate(motorVelocity, K_kA*(motorVelocity - motor.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
         double times = motor.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
-        double rotationAcceleration = (targetRotation.getDistance()-times*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        double motorRotation = targetRotation.getDistance() / config.wheelDiameter * 2 * config.turntableToWheelTimes * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
+        double rotationAcceleration = (motorRotation-times*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower += K_kJ * PARAMS.kJ * rotationAcceleration;
-        double translationAcceleration = (targetTranslation.getDistance()-times*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        double motorTranslation = targetTranslation.getDistance() / config.wheelDiameter * 2 * config.turntableToWheelTimes * config.motorToTurntableTimes * config.motorGearRatio * (28.0/* tick / cycle */ / (2 * Math.PI));
+        double translationAcceleration = (motorTranslation-times*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
         svaPower += K_kM * PARAMS.kM * translationAcceleration;
         motor.setPower((svaPower + pidPower) / SwerveController.getVoltage());
         lastUpdateTime=System.nanoTime();
