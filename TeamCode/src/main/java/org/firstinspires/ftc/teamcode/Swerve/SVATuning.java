@@ -22,7 +22,7 @@ import java.util.List;
 @TeleOp
 public class SVATuning extends LinearOpMode {
     SwerveDrive swerveDrive;
-    enum TuningMode{
+    public enum TuningMode{
         ROTATION, TRANSLATION;
         TuningMode next(){
             return this==ROTATION?TRANSLATION:ROTATION;
@@ -36,7 +36,6 @@ public class SVATuning extends LinearOpMode {
         FINISHED
     }
     RotationState rotationState = RotationState.kS_ASSESSING;
-    TuningMode tuningMode = TuningMode.ROTATION;
     List<Point2D> point2Ds_SV = new ArrayList<>();
     List<Point2D> point2Ds_kJ = new ArrayList<>();
     List<Double> testAccelerations = new ArrayList<>();
@@ -48,9 +47,11 @@ public class SVATuning extends LinearOpMode {
     public double kJ = 0;//等效旋转惯量
 
     //static参数可调
+    public static TuningMode tuningMode = TuningMode.ROTATION;
     public static int kS_kV_TestPoints = 20;
     public static double kS_kV_TestMaxVariance = 1;
     public static double[] kJ_TestUseVoltage = new double[]{1,2,3,4,5,6};
+    public static double usableTestDistance = 5;
     @Override
     public void runOpMode() throws InterruptedException {
 
