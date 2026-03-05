@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveController;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.Line;
@@ -99,7 +100,7 @@ public class SVATuning extends LinearOpMode {
                 long kJ_lastTime = 0;//nano sec
                 double lastVelocityTPS=0;
                 while (opModeIsActive()) {
-                    double batteryVoltage = swerveDrive.swerveController.voltageSensor.getVoltage();
+                    double batteryVoltage = SwerveController.getVoltage();
                     switch(rotationState) {
                         //初始评估kS，防止拟合直线时有部分点在x轴上，形成折线，影响拟合效果
                         case kS_ASSESSING:
