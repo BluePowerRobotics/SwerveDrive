@@ -45,6 +45,8 @@ If your final robot uses mixed wheel types, use this two-step process:
 
 PID parameters are not tested in `SVATuning` OpMode, and can be set to 0 (like other drive implements, and they do not use PID). You can tune them by yourself after you get the feed forward parameters.
 
+Notice that after testing, you should tune the Angle PID for better turing behaviour (especially in `DifferentialWheel`).
+
 ## **Build**
 
 Suggested way is to download dependencies from maven. Let Gradle sync and download all required dependencies. Just use Android Studio to open this repo.

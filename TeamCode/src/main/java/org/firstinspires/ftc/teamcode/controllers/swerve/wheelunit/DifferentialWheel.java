@@ -42,7 +42,7 @@ public class DifferentialWheel implements WheelUnit{
     DcMotorEx motor1;
     DcMotorEx motor2;
     AngleSensor angleSensor;
-    PIDController anguPID;
+    PIDController anglPID;
     PIDController motor1PID;
     SVAController motorSVA;
     public DifferentialWheel (DifferentialWheelConfig config, DcMotorEx motor1, DcMotorEx motor2, AngleSensor angleSensor){
@@ -52,7 +52,7 @@ public class DifferentialWheel implements WheelUnit{
         motor1.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.config=config;
-        anguPID = new PIDController(PARAMS.sp, PARAMS.si, PARAMS.sd);
+        anglPID = new PIDController(PARAMS.sp, PARAMS.si, PARAMS.sd);
         motor1PID = new PIDController(PARAMS.mp, PARAMS.mi, PARAMS.md);
         motorSVA = new SVAController(PARAMS.kS,PARAMS.kV,PARAMS.kA);
     }
@@ -140,17 +140,17 @@ public class DifferentialWheel implements WheelUnit{
         double K_kA=1,K_kM=0,K_kJ=0;
         switch (inputMethod) {
             case POWER_HEADING:
-                anguPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
+                anglPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
                 Point2D calculatedTargetHeading_PH;
                 double calculatedPower;
                 if (targetPower != 0) {
-                    Point2D now = Point2D.fromPolar(getHeading(), targetPower);
-                    if (Point2D.dot(now, targetHeading) < 0) {
+                    Point2D nowHeadingTargetPower = Point2D.fromPolar(getHeading(), targetPower);
+                    if (Point2D.dot(nowHeadingTargetPower, targetHeading) < 0) {
                         calculatedTargetHeading_PH = Point2D.scale(targetHeading, -1);
                     } else {
                         calculatedTargetHeading_PH = new Point2D(targetHeading);
                     }
-                    calculatedPower = Point2D.dot(now, targetHeading);
+                    calculatedPower = Point2D.dot(nowHeadingTargetPower, targetHeading);
                 } else {
                     Point2D now = Point2D.fromPolar(getHeading(), targetPower);
                     if (Point2D.dot(now, targetHeading) < 0) {
@@ -160,7 +160,7 @@ public class DifferentialWheel implements WheelUnit{
                     }
                     calculatedPower = targetPower;
                 }
-                double omega = anguPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading_PH.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9);
+                double omega = anglPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading_PH.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9);
                 double power1 = + calculatedPower + omega;
                 double power2 = - calculatedPower + omega;
                 motor1.setPower(power1);
@@ -178,7 +178,7 @@ public class DifferentialWheel implements WheelUnit{
             case SPEED_HEADING:
                 break;
         }
-        anguPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
+        anglPID.setPID(PARAMS.sp, PARAMS.si, PARAMS.sd);
         motor1PID.setPID(PARAMS.mp, PARAMS.mi, PARAMS.md);
         motorSVA.setSVA(PARAMS.kS, PARAMS.kV, PARAMS.kA);
         double calculatedSpeed;
@@ -201,9 +201,29 @@ public class DifferentialWheel implements WheelUnit{
             calculatedSpeed = 0;
         }
 
-        double targetAngularVelocity = anguPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9);
+        double targetAngularVelocity = anglPID.calculate(0, MathSolver.normalizeAngle(calculatedTargetHeading.getRadian() - getHeading()), (System.nanoTime() - lastUpdateTime) / 1e9);
         double targetVelocity1 = (targetAngularVelocity + calculatedSpeed * config.turntableToWheelTimes / config.wheelDiameter) * config.motor1GearRatio * config.motor1ToTurntableTimes * 14 / Math.PI;
         double targetVelocity2 = (targetAngularVelocity - calculatedSpeed * config.turntableToWheelTimes / config.wheelDiameter) * config.motor2GearRatio * config.motor2ToTurntableTimes * 14 / Math.PI;
+        double pidPower1 = motor1PID.calculate(targetVelocity1, motor1.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
+        double pidPower2 = motor1PID.calculate(targetVelocity2, motor2.getVelocity(), (System.nanoTime() - lastUpdateTime) / 1e9);
+
+        double svaPower1 = motorSVA.calculate(targetVelocity1, K_kA*(targetVelocity1 - motor1.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
+        double times1 = motor1.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
+        double rotationAcceleration1 = (targetRotation.getDistance()-times1*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        svaPower1 += K_kJ * PARAMS.kJ * rotationAcceleration1;
+        double translationAcceleration1 = (targetTranslation.getDistance()-times1*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        svaPower1 += K_kM * PARAMS.kM * translationAcceleration1;
+        motor1.setPower((svaPower1 + pidPower1) / SwerveController.getVoltage());
+
+        double svaPower2 = motorSVA.calculate(targetVelocity2, K_kA*(targetVelocity2 - motor2.getVelocity()) / ((System.nanoTime() - lastUpdateTime) / 1e9));
+        double times2 = motor2.getVelocity()/Point2D.translate(lastTranslation,lastRotation).getDistance();
+        double rotationAcceleration2 = (targetRotation.getDistance()-times2*lastRotation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        svaPower2 += K_kJ * PARAMS.kJ * rotationAcceleration2;
+        double translationAcceleration2 = (targetTranslation.getDistance()-times2*lastTranslation.getDistance()) / ((System.nanoTime() - lastUpdateTime) / 1e9);
+        svaPower2 += K_kM * PARAMS.kM * translationAcceleration2;
+        motor2.setPower((svaPower2 + pidPower2) / SwerveController.getVoltage());
+
+        lastUpdateTime=System.nanoTime();
     }
     @Override
     public void stop() {
