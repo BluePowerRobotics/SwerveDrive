@@ -212,6 +212,7 @@ public class SVATuning extends LinearOpMode {
                         telemetry.addData("kV", kV);
                         telemetry.addData("kJ", kJ);
                     }
+                    telemetry.addData("Status",rotationState.toString());
                     telemetry.update();
                 }
                 break;
