@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.WheelUnit;
 import org.firstinspires.ftc.teamcode.utility.ActionRunner;
@@ -23,8 +24,8 @@ public class SwerveController {
         robotPosition= RobotPosition.refresh(localizer);
         this.voltageSupplier = getVoltage;
         this.wheelUnits = wheelUnits;
-        HeadingLockRadian = robotPosition.getData().headingRadian;
-        noHeadModeStartError=robotPosition.getData().headingRadian;
+        HeadingLockRadian = Data.getInstance().headingRadian;
+        noHeadModeStartError=Data.getInstance().headingRadian;
     }
 
     public enum AutoMode{
