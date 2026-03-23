@@ -22,13 +22,13 @@ public class VoltageOut {
     }
 
     /**
-     * 根据目标电压和当前电压计算输出功率，确保在电压过低时安全停止
+     * 根据目标电压和当前电压计算输出功率，在电压过低时安全停止
      * 输入范围：[-12.0，12.0]输出范围：[-1.0，1.0]
      * @param targetVoltage
      * @return power
      */
     public double getVoltageOutPower(double targetVoltage){
-        if (currentVoltage <= 0.5) {
+        if (currentVoltage <= 6) {
             // 防护：读数异常或几乎没电，直接安全停止或降级
             return(0);
         } else {
