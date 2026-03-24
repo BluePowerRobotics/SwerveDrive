@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 
@@ -23,6 +24,11 @@ public class VoltageOutTester extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         VoltageOut voltageOut = new VoltageOut(hardwareMap);
+
+        DcMotorEx M1 = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotorEx M2 = hardwareMap.get(DcMotorEx.class, "leftBack");
+        DcMotorEx M3 = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotorEx M4 = hardwareMap.get(DcMotorEx.class, "rightBack");
 
         DcMotorEx V_Motor = hardwareMap.get(DcMotorEx.class, "VMotor");
         DcMotorEx D_Motor = hardwareMap.get(DcMotorEx.class, "DMotor");
@@ -63,7 +69,17 @@ public class VoltageOutTester extends LinearOpMode {
                 CurrentEater.setPower(0);
                 V_Motor.setPower(0);
                 D_Motor.setPower(0);
+                M1.setPower(0);
+                M2.setPower(0);
+                M3.setPower(0);
+                M4.setPower(0);
             }
+
+            M1.setPower(gamepad1.left_stick_x);
+            M2.setPower(gamepad1.left_stick_x);
+            M3.setPower(-gamepad1.left_stick_x);
+            M4.setPower(-gamepad1.left_stick_x);
+
 
             telemetry.addData("Current Voltage", voltageOut.getVoltage());
             telemetry.addData("Filtered Voltage", voltageFilter.filter(voltageOut.getVoltage()));
@@ -72,6 +88,9 @@ public class VoltageOutTester extends LinearOpMode {
             telemetry.addData("power", power);
             telemetry.addData("V_vel", V_Motor.getVelocity());
             telemetry.addData("D_vel", D_Motor.getVelocity());
+            telemetry.addData("V_current", V_Motor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("D_current", D_Motor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("CurrentEater_current", CurrentEater.getCurrent(CurrentUnit.AMPS));
             telemetry.update();
         }
     }
