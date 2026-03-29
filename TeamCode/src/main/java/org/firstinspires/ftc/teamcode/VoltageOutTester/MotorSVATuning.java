@@ -62,7 +62,9 @@ public class MotorSVATuning extends LinearOpMode {
 
     // Configurable parameters
     public static TuningMode tuningMode = TuningMode.AUTOMATIC;
-    public static int testPoints = 20;
+    public static double KS_VOLTAGE_INCREMENT = 0.001; // Voltage increment for kS assessment
+    public static double KS_VELOCITY_THRESHOLD = 20; // Velocity threshold to determine if motor is moving
+    public static int testPoints = 5;
     public static double maxVariance = 1;
     public static double[] kA_TestVoltages = new double[]{1, 2, 3, 4, 5, 6};
     public static double voltageIncrement = 0.01; // For manual mode
@@ -121,8 +123,8 @@ public class MotorSVATuning extends LinearOpMode {
 
             switch (state) {
                 case kS_ASSESSING:
-                    outputVoltage += 0.005;
-                    if (Math.abs(velocity) > 10) { // Threshold to start moving
+                    outputVoltage += KS_VOLTAGE_INCREMENT;
+                    if (Math.abs(velocity) > KS_VELOCITY_THRESHOLD) { // Threshold to start moving
                         kS = outputVoltage;
                         state = State.kS_kV_FITTING;
                     }
@@ -156,8 +158,11 @@ public class MotorSVATuning extends LinearOpMode {
                                 Line line = MathSolver.fitLine(points_kS_kV);
                                 kV = 1 / line.getSlope();
                                 kS = line.getXIntercept();
-                                state = State.WAITING;
+                                //state = State.WAITING;
                             }
+                        }
+                        if(gamepad1.start){
+                            state = State.WAITING;
                         }
                     }
                     break;
