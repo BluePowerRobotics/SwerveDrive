@@ -40,7 +40,7 @@ public class SVATuning extends LinearOpMode {
     List<Point2D> point2Ds_kJ = new ArrayList<>();
     List<Point2D> point2Ds_kM = new ArrayList<>();
     List<Double> testAccelerations = new ArrayList<>();
-    MeanFilter meanFilter_SV = new MeanFilter(20);
+    MeanFilter meanFilter_SV = new MeanFilter(200);
     public static double kS = 0;
     public static double kV = 0;
     public static double kA = 0;
@@ -50,7 +50,7 @@ public class SVATuning extends LinearOpMode {
     //static参数可调
     public static TuningMode tuningMode = TuningMode.ROTATION;
     public static int kS_kV_TestPoints = 20;
-    public static double kS_kV_TestMaxVariance = 1;
+    public static double kS_kV_TestMaxVariance = 400;
     public static double[] kJ_TestUseVoltage = new double[]{1,2,3,4,5,6};
     public static double[] kM_TestUseVoltage = new double[]{1,2,3,4,5,6};
     public static double usableTestDistance = 5;
@@ -134,6 +134,7 @@ public class SVATuning extends LinearOpMode {
                             if (meanFilter_SV.getCount() < meanFilter_SV.getWindowSize()) {
                                 dataUsable = false;
                             }
+                            telemetry.addData("Variance", meanFilter_SV.getVariance());
                             if (meanFilter_SV.getVariance() > kS_kV_TestMaxVariance) {
                                 dataUsable = false;
                             }
