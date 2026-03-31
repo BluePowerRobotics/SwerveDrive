@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.utility.SlotConfig;
 import org.firstinspires.ftc.teamcode.utility.VoltageOut;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+
 @Config
 public class ExampleVoltageOutMotor {
     // Dashboard 热调参参数
@@ -32,15 +33,19 @@ public class ExampleVoltageOutMotor {
 
     public ExampleVoltageOutMotor(HardwareMap hardwareMap, String motorName, Telemetry telemetry) {
         this.motor = hardwareMap.get(DcMotorEx.class, motorName);
+
+        this.motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        this.motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        this.motor.setDirection(DcMotorEx.Direction.FORWARD);
+
         this.voltageOut = new VoltageOut(hardwareMap);
+
         this.config = new SlotConfig()
                 .withKP(kP).withKI(kI).withKD(kD).withMaxI(maxI)
                 .withKS(kS).withKV(kV).withKA(kA)
                 .withOutputLimits(outputMin, outputMax);
-        this.controller = PIDSVAController.create().withSlot0(config);
-        this.motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        this.motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        this.motor.setDirection(DcMotorEx.Direction.FORWARD);
+        this.controller = new PIDSVAController().withSlot0(config);
+
         this.telemetry = telemetry;
     }
 
@@ -53,11 +58,12 @@ public class ExampleVoltageOutMotor {
         config.withKP(kP).withKI(kI).withKD(kD).withMaxI(maxI)
               .withKS(kS).withKV(kV).withKA(kA)
               .withOutputLimits(outputMin, outputMax);
+        controller.resetSlot(config);
         long now = System.currentTimeMillis();
         double dt = lastUpdateTime == 0 ? 0.02 : (now - lastUpdateTime) / 1000.0;
         lastUpdateTime = now;
         double currentVelocity = motor.getVelocity();
-        double outputVoltage = controller.calculate(targetVelocity, currentVelocity, targetVelocity, 0.0, dt);
+        double outputVoltage = controller.calculate(targetVelocity, currentVelocity, dt);
         double power = voltageOut.getVoltageOutPower(outputVoltage);
         motor.setPower(power);
         telemetry.addData("TargetVelocity", targetVelocity);

@@ -16,6 +16,7 @@ public class PIDSVAController {
      * 快速设置默认slot(0号slot)的PID和SVA参数
      */
     public PIDSVAController withSlot0(SlotConfig config) {
+        currentSlot = 0;
         return withSlot(0, config);
     }
 
@@ -26,6 +27,7 @@ public class PIDSVAController {
      * @return
      */
     public PIDSVAController withSlot(int slot, SlotConfig config) {
+        currentSlot = slot;
         slots.put(slot, config);
         return this;
     }
@@ -39,6 +41,15 @@ public class PIDSVAController {
         currentSlot = slot;
         integral = 0;
         previousError = 0;
+    }
+
+    public void resetSlot(SlotConfig config) {
+        if (!slots.containsKey(0)) throw new IllegalArgumentException("Slot not configured");
+        slots.put(0, config);
+    }
+    public void resetSlot(int slot, SlotConfig config) {
+        if (!slots.containsKey(slot)) throw new IllegalArgumentException("Slot not configured");
+        slots.put(slot, config);
     }
 
     /**
