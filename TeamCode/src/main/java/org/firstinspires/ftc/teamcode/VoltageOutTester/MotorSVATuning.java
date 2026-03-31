@@ -61,7 +61,7 @@ public class MotorSVATuning extends LinearOpMode {
     public static double kA = 0;
 
     // Configurable parameters
-    public static TuningMode tuningMode = TuningMode.AUTOMATIC;
+    public static TuningMode tuningMode = TuningMode.MANUAL;
     public static double KS_VOLTAGE_INCREMENT = 0.001; // Voltage increment for kS assessment
     public static double KS_VELOCITY_THRESHOLD = 20; // Velocity threshold to determine if motor is moving
     public static int testPoints = 5;
@@ -123,7 +123,7 @@ public class MotorSVATuning extends LinearOpMode {
 
             switch (state) {
                 case kS_ASSESSING:
-                    outputVoltage += KS_VOLTAGE_INCREMENT;
+                    outputVoltage += KS_VOLTAGE_INCREMENT / 100;//延缓增加，给电流作用的时间
                     if (Math.abs(velocity) > KS_VELOCITY_THRESHOLD) { // Threshold to start moving
                         kS = outputVoltage;
                         state = State.kS_kV_FITTING;
@@ -146,10 +146,16 @@ public class MotorSVATuning extends LinearOpMode {
                             state = State.WAITING;
                         }
                     } else { // MANUAL
-                        if (gamepad1.dpad_up) {
+                        if (gamepad1.dpadUpWasPressed()) {
                             outputVoltage += voltageIncrement;
-                        } else if (gamepad1.dpad_down) {
+                        } else if (gamepad1.dpadDownWasPressed()) {
                             outputVoltage -= voltageIncrement;
+                        }
+                        if(gamepad1.dpadLeftWasPressed()){
+                            outputVoltage -= KS_VOLTAGE_INCREMENT;
+                        }
+                        if(gamepad1.dpadRightWasPressed()){
+                            outputVoltage += KS_VOLTAGE_INCREMENT;
                         }
                         if (gamepad1.a) { // Record point
                             points_kS_kV.add(new Point2D(outputVoltage, velocity));
