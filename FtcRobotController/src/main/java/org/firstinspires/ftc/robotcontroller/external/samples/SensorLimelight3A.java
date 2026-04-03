@@ -66,11 +66,11 @@ import java.util.List;
  *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
  *   below the name of the Limelight on the top level configuration screen.
  */
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
-@Disabled
+@TeleOp(name = "EMITESTSensor: Limelight3A", group = "Sensor")
 public class SensorLimelight3A extends LinearOpMode {
 
     private Limelight3A limelight;
+    boolean hasDisconnected = false;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -92,6 +92,17 @@ public class SensorLimelight3A extends LinearOpMode {
 
         while (opModeIsActive()) {
             LLStatus status = limelight.getStatus();
+            telemetry.addData("deltatimeupdate", limelight.getTimeSinceLastUpdate());
+            telemetry.addData("ifconnected", limelight.isConnected());
+            if(!limelight.isConnected()){
+                if(!hasDisconnected){
+                    hasDisconnected = true;
+                    telemetry.addData("Connection", "Limelight disconnected");
+                } else {
+                    telemetry.addData("Connection", "Limelight still not connected");
+                }
+            }
+            telemetry.addData("ifhasdisconnected", hasDisconnected);
             telemetry.addData("Name", "%s",
                     status.getName());
             telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
