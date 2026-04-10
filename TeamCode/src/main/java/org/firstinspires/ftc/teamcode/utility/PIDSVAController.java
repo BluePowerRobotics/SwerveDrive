@@ -8,10 +8,6 @@ public class PIDSVAController {
     private int currentSlot = 0;
     private double integral = 0, previousError = 0;
 
-    public static PIDSVAController create() {
-        return new PIDSVAController();
-    }
-
     /**
      * 快速设置默认slot(0号slot)的PID和SVA参数
      */

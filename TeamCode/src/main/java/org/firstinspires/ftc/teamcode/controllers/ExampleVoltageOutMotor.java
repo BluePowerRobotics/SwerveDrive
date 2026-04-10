@@ -34,6 +34,7 @@ public class ExampleVoltageOutMotor {
     public ExampleVoltageOutMotor(HardwareMap hardwareMap, String motorName, Telemetry telemetry) {
         this.motor = hardwareMap.get(DcMotorEx.class, motorName);
 
+        this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         this.motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
         this.motor.setDirection(DcMotorEx.Direction.FORWARD);
@@ -62,9 +63,13 @@ public class ExampleVoltageOutMotor {
         long now = System.currentTimeMillis();
         double dt = lastUpdateTime == 0 ? 0.02 : (now - lastUpdateTime) / 1000.0;
         lastUpdateTime = now;
+
         double currentVelocity = motor.getVelocity();
+
         double outputVoltage = controller.calculate(targetVelocity, currentVelocity, dt);
+
         double power = voltageOut.getVoltageOutPower(outputVoltage);
+
         motor.setPower(power);
         telemetry.addData("TargetVelocity", targetVelocity);
         telemetry.addData("CurrentVelocity", currentVelocity);
