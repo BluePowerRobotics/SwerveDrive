@@ -95,16 +95,17 @@ public class SwerveDrive {
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
     public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-6.732283,4.76378),
-            1.5, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.REVERSE,
+            Math.PI, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(6.732283,4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-6.732283,-4.76378),
-            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+            -0.256, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            -13.7, 32.0/105.0, 54.0/20.0, 2.5);
+    //TODO REVERSEMOTOR
     public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(6.732283,-4.76378),
-            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            -0.158, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params();
     public static ServoCoaxialWheel.Params rightFrontParams = new ServoCoaxialWheel.Params();
