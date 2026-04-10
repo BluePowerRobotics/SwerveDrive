@@ -9,14 +9,14 @@ public class ServoCoaxialWheelConfig {
     public double motorToTurntableTimes;
     public double turntableToWheelTimes;
     public double wheelDiameter;
-    public double zeroDegreeSensorValue;
+    public double zeroDegreeSensorRadian;
     public Servo.Direction servoDirection;
     public enum AngleSenSorDirection{FORWARD, REVERSE}
     public AngleSenSorDirection angleSenSorDirection;
     public Point2D wheelPosition;
-    public ServoCoaxialWheelConfig(Point2D wheelPosition, double zeroDegreeSensorValue, Servo.Direction servoDirection, AngleSenSorDirection angleSenSorDirection,
+    public ServoCoaxialWheelConfig(Point2D wheelPosition, double zeroDegreeSensorRadian, Servo.Direction servoDirection, AngleSenSorDirection angleSenSorDirection,
                                    double motorGearRatio, double motorToTurntableTimes, double turntableToWheelTimes, double wheelDiameter){
-        this.zeroDegreeSensorValue = zeroDegreeSensorValue;
+        this.zeroDegreeSensorRadian = zeroDegreeSensorRadian;
         this.wheelPosition=wheelPosition;
         this.servoDirection = servoDirection;
         this.angleSenSorDirection = angleSenSorDirection;
