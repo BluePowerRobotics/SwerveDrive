@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.utility.filter.MeanFilter;
 @Config
 public class ServoCoaxialWheel implements WheelUnit{
     public static class Params {
-        public double sp=1;
+        public double sp=0.6;
         public double si=0;
         public double sd=0;
-        public double mp=0.0;
+        public double mp=0.1;
         public double mi=0;
         public double md=0.0;
         public double kS=0;
@@ -73,7 +73,7 @@ public class ServoCoaxialWheel implements WheelUnit{
         this.angleSensor=angleSensor;
         this.motor.setDirection(DcMotorEx.Direction.FORWARD);
         this.servo.setDirection(config.servoDirection);
-        lastRadian = config.zeroDegreeSensorValue;
+        lastRadian = config.zeroDegreeSensorRadian;
         lastTime = System.nanoTime();
         targetHeading = Point2D.fromPolar(config.wheelPosition.getRadian(), 1);
         servoPID = new PIDController(PARAMS.sp, PARAMS.si, PARAMS.sd);
@@ -141,9 +141,9 @@ public class ServoCoaxialWheel implements WheelUnit{
     public double getHeading() {
         switch (config.angleSenSorDirection) {
             case FORWARD:
-                return MathSolver.normalizeAngle(angleSensor.getRadian()-config.zeroDegreeSensorValue);
+                return MathSolver.normalizeAngle(angleSensor.getRadian()-config.zeroDegreeSensorRadian);
             case REVERSE:
-                return MathSolver.normalizeAngle(-angleSensor.getRadian()+config.zeroDegreeSensorValue);
+                return MathSolver.normalizeAngle(-angleSensor.getRadian()+config.zeroDegreeSensorRadian);
         }
         return 0;
     }
