@@ -107,10 +107,26 @@ public class SwerveDrive {
     public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(6.732283,-4.76378),
             -0.158, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
-    public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params();
-    public static ServoCoaxialWheel.Params rightFrontParams = new ServoCoaxialWheel.Params();
-    public static ServoCoaxialWheel.Params leftBackParams = new ServoCoaxialWheel.Params();
-    public static ServoCoaxialWheel.Params rightBackParams = new ServoCoaxialWheel.Params();
+    public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params()
+            .withSP(0.6).withSI(0).withSD(0)
+            .withMP(0.0).withMI(0).withMD(0.0)
+            .withKS(0).withKV(0).withKA(0)
+            .withKM(0).withKJ(0);
+    public static ServoCoaxialWheel.Params rightFrontParams = new ServoCoaxialWheel.Params()
+            .withSP(0.6).withSI(0).withSD(0)
+            .withMP(0.0).withMI(0).withMD(0.0)
+            .withKS(0).withKV(0).withKA(0)
+            .withKM(0).withKJ(0);
+    public static ServoCoaxialWheel.Params leftBackParams = new ServoCoaxialWheel.Params()
+            .withSP(0.6).withSI(0).withSD(0)
+            .withMP(0.0).withMI(0).withMD(0.0)
+            .withKS(0).withKV(0).withKA(0)
+            .withKM(0).withKJ(0);
+    public static ServoCoaxialWheel.Params rightBackParams = new ServoCoaxialWheel.Params()
+            .withSP(0.6).withSI(0).withSD(0)
+            .withMP(0.0).withMI(0).withMD(0.0)
+            .withKS(0).withKV(0).withKA(0)
+            .withKM(0).withKJ(0);
     public SwerveController swerveController;
     public final LazyImu lazyImu;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();

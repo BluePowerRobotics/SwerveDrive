@@ -17,7 +17,7 @@ public class ServoCoaxialWheel implements WheelUnit{
         public double sp=0.6;
         public double si=0;
         public double sd=0;
-        public double mp=0.1;
+        public double mp=0.0;
         public double mi=0;
         public double md=0.0;
         public double kS=0;
@@ -39,6 +39,17 @@ public class ServoCoaxialWheel implements WheelUnit{
             this.kM = kM;
             this.kJ = kJ;
         }
+        public Params withSP(double sp) { this.sp = sp; return this; }
+        public Params withSI(double si) { this.si = si; return this; }
+        public Params withSD(double sd) { this.sd = sd; return this; }
+        public Params withMP(double mp) { this.mp = mp; return this; }
+        public Params withMI(double mi) { this.mi = mi; return this; }
+        public Params withMD(double md) { this.md = md; return this; }
+        public Params withKS(double kS) { this.kS = kS; return this; }
+        public Params withKV(double kV) { this.kV = kV; return this; }
+        public Params withKA(double kA) { this.kA = kA; return this; }
+        public Params withKM(double kM) { this.kM = kM; return this; }
+        public Params withKJ(double kJ) { this.kJ = kJ; return this; }
     }
     Params PARAMS = new Params();
     ServoCoaxialWheelConfig config;
