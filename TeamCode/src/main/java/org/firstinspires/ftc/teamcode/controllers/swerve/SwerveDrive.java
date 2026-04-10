@@ -94,18 +94,18 @@ public class SwerveDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-1,1),
+    public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-6.732283,4.76378),
+            1.5, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.REVERSE,
+            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(6.732283,4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
-    public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(1,1),
+            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-6.732283,-4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
-    public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-1,-1),
+            13.7, 32.0/105.0, 54.0/20.0, 2.5);
+    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(6.732283,-4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
-    public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(1,-1),
-            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
-            2.89*3.61/* *5.23 */,80.0/72.0,60.0/18.0,2.5);
+            13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params();
     public static ServoCoaxialWheel.Params rightFrontParams = new ServoCoaxialWheel.Params();
     public static ServoCoaxialWheel.Params leftBackParams = new ServoCoaxialWheel.Params();
