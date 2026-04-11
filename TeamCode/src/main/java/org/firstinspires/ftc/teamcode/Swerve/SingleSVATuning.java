@@ -198,11 +198,12 @@ public class SingleSVATuning extends LinearOpMode {
                             lastVelocityTPS = velocity[rotationTuningMotorIndex];
                             double acceleration = deltaVelocityTPS / deltaTime;//T P S^2
                             kJ_lastTime = nowTime;
-                            testAccelerations.add(acceleration);
+                            testAccelerations.add(Math.abs(acceleration));
                             double speedUpVoltage = kJ_TestUseVoltage[kJ_TestIndex];
                             outputVoltage = kS + kV * velocity[rotationTuningMotorIndex] + speedUpVoltage;
                             if (outputVoltage > batteryVoltage) {
                                 point2Ds_kJ.add(new Point2D(MathSolver.avg(testAccelerations.toArray(new Double[0])), speedUpVoltage));
+                                testAccelerations.clear();
                                 kJ_TestIndex++;
                                 kJ_Started = false;
                                 rotationState = RotationState.kJ_WAITING;
@@ -235,7 +236,6 @@ public class SingleSVATuning extends LinearOpMode {
                                 rotationState = RotationState.kS_ASSESSING;
                                 point2Ds_SV.clear();
                                 point2Ds_kJ.clear();
-                                testAccelerations.clear();
                             }
                             break;
                     }
@@ -299,11 +299,12 @@ public class SingleSVATuning extends LinearOpMode {
                     lastVelocityTPS = MathSolver.avg(velocity);
                     double acceleration = deltaVelocityTPS / deltaTime;//T P S^2
                     kM_lastTime = nowTime;
-                    testAccelerations.add(acceleration);
+                    testAccelerations.add(Math.abs(acceleration));
                     double speedUpVoltage = kM_TestUseVoltage[kM_TestIndex];
                     outputVoltage = kS + kV * MathSolver.avg(velocity) + speedUpVoltage;
-                    if (outputVoltage > batteryVoltage || distanceTraveled - usableTestDistance >-testTolerance || distanceTraveled < -testTolerance ) {
+                    if (outputVoltage > batteryVoltage || reversed?(distanceTraveled-usableTestDistance>0||distanceTraveled<testTolerance):(distanceTraveled-usableTestDistance>-testTolerance||distanceTraveled<0)) {
                         point2Ds_kM.add(new Point2D(MathSolver.avg(testAccelerations.toArray(new Double[0])), speedUpVoltage));
+                        testAccelerations.clear();
                         kM_TestIndex++;
                         kM_Started = false;
                         rotationState = RotationState.kJ_WAITING;
