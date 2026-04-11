@@ -77,6 +77,9 @@ public class SwerveController {
     public void setAutoLockHeading(boolean autoLockHeading) {
         this.autoLockHeading = autoLockHeading;
     }
+    public boolean getAutoLockHeading() {
+        return autoLockHeading;
+    }
 
     public void resetNoHeadModeStartError(double Radian) {
         noHeadModeStartError = Radian;
