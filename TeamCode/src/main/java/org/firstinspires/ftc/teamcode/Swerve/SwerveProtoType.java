@@ -19,7 +19,7 @@ public class SwerveProtoType extends LinearOpMode {
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
-            swerveDrive.swerveController.gamepadInput(20,-40*gamepad1.left_stick_y,-20*gamepad1.right_stick_x);
+            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
             for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
                 telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
                 telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
