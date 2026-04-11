@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.Point2D;
 import org.firstinspires.ftc.teamcode.utility.filter.AngleMeanFilter;
 
 import java.util.function.Supplier;
-
+@Config
 public class SwerveController {
     public SwerveController(SwerveDrive swerveDrive,Localizer localizer, Supplier<Double> getVoltage, WheelUnit... wheelUnits) {
         this.swerveDrive = swerveDrive;
@@ -243,7 +243,7 @@ class ChassisCalculator {
      */
     public void solveChassis(WheelUnit wheelUnit,double vx, double vy, double omega,int index) {
         Point2D translation = new Point2D(vx,vy);
-        Point2D rotation = new Point2D(-omega * omega*wheelUnit.getPosition().getY(), omega * wheelUnit.getPosition().getX());
+        Point2D rotation = Point2D.fromPolar(Math.atan2(wheelUnit.getPosition().getY(),wheelUnit.getPosition().getX())+Math.PI/2,omega*wheelUnit.getPosition().getDistance());
         wheelUnit.setVector(translation, rotation);
         Point2D vector = Point2D.translate(translation, rotation);
         InstanceTelemetry.getTelemetry().addData(index+"targetHeading",vector.getRadian());
