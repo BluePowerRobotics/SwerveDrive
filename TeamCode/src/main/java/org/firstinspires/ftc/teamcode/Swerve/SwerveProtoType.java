@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
+import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 
 @TeleOp
 public class SwerveProtoType extends LinearOpMode {
@@ -24,6 +26,8 @@ public class SwerveProtoType extends LinearOpMode {
                 telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
                 telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
             }
+            telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
+            telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
             telemetry.update();
         }
     }
