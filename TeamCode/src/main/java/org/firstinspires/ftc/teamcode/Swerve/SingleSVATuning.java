@@ -66,10 +66,10 @@ public class SingleSVATuning extends LinearOpMode {
             if (tuningMode == TuningMode.ROTATION) {
                 telemetry.addLine("Tuning Mode: Rotation");
                 telemetry.addData("TuningMotorIndex",rotationTuningMotorIndex);
-                if(gamepad1.dpad_up){
+                if(gamepad1.dpadUpWasReleased()){
                     rotationTuningMotorIndex = (rotationTuningMotorIndex+1)% SwerveDrive.PARAMS.unitNames.length;
                 }
-                if(gamepad1.dpad_down){
+                if(gamepad1.dpadDownWasReleased()){
                     rotationTuningMotorIndex = (rotationTuningMotorIndex-1+ SwerveDrive.PARAMS.unitNames.length)% SwerveDrive.PARAMS.unitNames.length;
                 }
             } else {
@@ -220,10 +220,10 @@ public class SingleSVATuning extends LinearOpMode {
                             if (tuningMode == TuningMode.ROTATION) {
                                 telemetry.addLine("Tuning Mode: Rotation");
                                 telemetry.addData("TuningMotorIndex",rotationTuningMotorIndex);
-                                if(gamepad1.dpad_up){
+                                if(gamepad1.dpadUpWasReleased()){
                                     rotationTuningMotorIndex = (rotationTuningMotorIndex+1)% SwerveDrive.PARAMS.unitNames.length;
                                 }
-                                if(gamepad1.dpad_down){
+                                if(gamepad1.dpadDownWasReleased()){
                                     rotationTuningMotorIndex = (rotationTuningMotorIndex-1+ SwerveDrive.PARAMS.unitNames.length)% SwerveDrive.PARAMS.unitNames.length;
                                 }
                             } else {
