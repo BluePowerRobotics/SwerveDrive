@@ -21,7 +21,7 @@ public class SwerveProtoType extends LinearOpMode {
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
-            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,gamepad1.right_stick_x);
+            swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
             if(gamepad1.aWasReleased()) swerveDrive.swerveController.setAutoLockHeading(!swerveDrive.swerveController.getAutoLockHeading());
             if(gamepad1.bWasReleased()) swerveDrive.swerveController.exchangeNoHeadMode();
             if(gamepad1.xWasReleased()) swerveDrive.swerveController.resetNoHeadModeStartError();
@@ -33,6 +33,7 @@ public class SwerveProtoType extends LinearOpMode {
             telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
             telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
             telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
+            telemetry.addData("targetHeading",swerveDrive.swerveController.getAutoLockHeading());
             telemetry.update();
         }
     }
