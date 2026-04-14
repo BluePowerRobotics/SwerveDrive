@@ -43,6 +43,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.RoadRunner.Localizer;
 import org.firstinspires.ftc.teamcode.RoadRunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
+import org.firstinspires.ftc.teamcode.controllers.EnhancedAngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.Data;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
 import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
@@ -149,25 +150,25 @@ public class SwerveDrive {
                 new ServoCoaxialWheel(leftFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[0]+"Servo"),
-                        new AngleSensor(
+                        new EnhancedAngleSensor(
                                 hardwareMap,PARAMS.unitNames[0]+"Analog",0
                         )).setPARAMS(leftFrontParams),
                 new ServoCoaxialWheel(rightFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[1]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[1]+"Servo"),
-                        new AngleSensor(
+                        new EnhancedAngleSensor(
                                 hardwareMap,PARAMS.unitNames[1]+"Analog",0
                         )).setPARAMS(rightFrontParams),
                 new ServoCoaxialWheel(leftBack,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[2]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[2]+"Servo"),
-                        new AngleSensor(
+                        new EnhancedAngleSensor(
                                 hardwareMap,PARAMS.unitNames[2]+"Analog",0
                         )).setPARAMS(leftBackParams),
                 new ServoCoaxialWheel(rightBack,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[3]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[3]+"Servo"),
-                        new AngleSensor(
+                        new EnhancedAngleSensor(
                                 hardwareMap,PARAMS.unitNames[3]+"Analog",0
                         )).setPARAMS(rightBackParams)
         );

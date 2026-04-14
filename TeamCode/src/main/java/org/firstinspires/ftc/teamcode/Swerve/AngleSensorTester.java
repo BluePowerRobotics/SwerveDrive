@@ -22,14 +22,14 @@ public class AngleSensorTester extends LinearOpMode {
         telemetry = InstanceTelemetry.init(telemetry);
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
         AngleSensor leftFront = new AngleSensor(
-                hardwareMap,PARAMS.unitNames[0]+"Analog",0);
-//        ),leftBack = new AngleSensor(
-//                hardwareMap,PARAMS.unitNames[1]+"Analog",0
-//        ),rightFront = new AngleSensor(
-//                hardwareMap,PARAMS.unitNames[2]+"Analog",0
-//        ),rightBack = new AngleSensor(
-//                hardwareMap,PARAMS.unitNames[3]+"Analog",0
-//        );
+                hardwareMap,PARAMS.unitNames[0]+"Analog",0
+        ),leftBack = new AngleSensor(
+                hardwareMap,PARAMS.unitNames[1]+"Analog",0
+        ),rightFront = new AngleSensor(
+                hardwareMap,PARAMS.unitNames[2]+"Analog",0
+        ),rightBack = new AngleSensor(
+                hardwareMap,PARAMS.unitNames[3]+"Analog",0
+        );
 
         waitForStart();
         while(opModeIsActive()){
@@ -54,13 +54,13 @@ public class AngleSensorTester extends LinearOpMode {
                 telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
             }
             telemetry.addData("LF Angle", leftFront.getRadian());
-//            telemetry.addData("LB Angle", leftBack.getRadian());
-//            telemetry.addData("RF Angle", rightFront.getRadian());
-//            telemetry.addData("RB Angle", rightBack.getRadian());
+            telemetry.addData("LB Angle", leftBack.getRadian());
+            telemetry.addData("RF Angle", rightFront.getRadian());
+            telemetry.addData("RB Angle", rightBack.getRadian());
             telemetry.addData("LF Voltage", leftFront.getVoltage());
-//            telemetry.addData("LB Voltage", leftBack.getVoltage());
-//            telemetry.addData("RF Voltage", rightFront.getVoltage());
-//            telemetry.addData("RB Voltage", rightBack.getVoltage());
+            telemetry.addData("LB Voltage", leftBack.getVoltage());
+            telemetry.addData("RF Voltage", rightFront.getVoltage());
+            telemetry.addData("RB Voltage", rightBack.getVoltage());
             telemetry.update();
         }
     }
