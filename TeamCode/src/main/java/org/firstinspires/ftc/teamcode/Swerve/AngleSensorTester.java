@@ -57,6 +57,10 @@ public class AngleSensorTester extends LinearOpMode {
             telemetry.addData("LB Angle", leftBack.getRadian());
             telemetry.addData("RF Angle", rightFront.getRadian());
             telemetry.addData("RB Angle", rightBack.getRadian());
+            telemetry.addData("LF Deg", Math.toDegrees(leftFront.getRadian()));
+            telemetry.addData("LB Deg", Math.toDegrees(leftBack.getRadian()));
+            telemetry.addData("RF Deg", Math.toDegrees(rightFront.getRadian()));
+            telemetry.addData("RB Deg", Math.toDegrees(rightBack.getRadian()));
             telemetry.addData("LF Voltage", leftFront.getVoltage());
             telemetry.addData("LB Voltage", leftBack.getVoltage());
             telemetry.addData("RF Voltage", rightFront.getVoltage());

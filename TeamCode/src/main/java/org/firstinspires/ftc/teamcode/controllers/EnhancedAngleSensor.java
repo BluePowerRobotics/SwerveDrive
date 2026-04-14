@@ -15,8 +15,8 @@ public class EnhancedAngleSensor extends AngleSensor{
     }
     public EnhancedAngleSensor(HardwareMap hardwareMap, String deviceName, double ZeroDegreeVoltage) {
         this(hardwareMap, deviceName, ZeroDegreeVoltage, new Point2D[]{
-                new Point2D(0, 0),
-                new Point2D(2 * Math.PI, 2 * Math.PI)
+                new Point2D(-Math.PI,-Math.PI),
+                new Point2D(Math.PI,Math.PI)
         });
     }
     @Override

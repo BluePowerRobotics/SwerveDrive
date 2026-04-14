@@ -96,18 +96,18 @@ public class SwerveDrive {
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
     public static ServoCoaxialWheelConfig leftFront = new ServoCoaxialWheelConfig(new Point2D(-6.732283,4.76378),
-            Math.PI, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
 //            3.61*5.23,21.0/54.0,54.0/20.0,3);
                 13.7,32.0/105.0,54.0/20.0,2.5);
     public static ServoCoaxialWheelConfig rightFront = new ServoCoaxialWheelConfig(new Point2D(6.732283,4.76378),
             0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheelConfig leftBack = new ServoCoaxialWheelConfig(new Point2D(-6.732283,-4.76378),
-            -0.156, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             -13.7, 32.0/105.0, 54.0/20.0, 2.5);
     //TODO REVERSEMOTOR
     public static ServoCoaxialWheelConfig rightBack = new ServoCoaxialWheelConfig(new Point2D(6.732283,-4.76378),
-            -0.158, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
+            0, Servo.Direction.REVERSE, ServoCoaxialWheelConfig.AngleSenSorDirection.FORWARD,
             13.7, 32.0/105.0, 54.0/20.0, 2.5);
     public static ServoCoaxialWheel.Params leftFrontParams = new ServoCoaxialWheel.Params()
             .withSP(0.6).withSI(0).withSD(0)
@@ -151,25 +151,25 @@ public class SwerveDrive {
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[0]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[0]+"Servo"),
                         new EnhancedAngleSensor(
-                                hardwareMap,PARAMS.unitNames[0]+"Analog",0
+                                hardwareMap,PARAMS.unitNames[0]+"Analog",3.22
                         )).setPARAMS(leftFrontParams),
                 new ServoCoaxialWheel(rightFront,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[1]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[1]+"Servo"),
                         new EnhancedAngleSensor(
-                                hardwareMap,PARAMS.unitNames[1]+"Analog",0
+                                hardwareMap,PARAMS.unitNames[1]+"Analog",0.013
                         )).setPARAMS(rightFrontParams),
                 new ServoCoaxialWheel(leftBack,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[2]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[2]+"Servo"),
                         new EnhancedAngleSensor(
-                                hardwareMap,PARAMS.unitNames[2]+"Analog",0
+                                hardwareMap,PARAMS.unitNames[2]+"Analog",3.224
                         )).setPARAMS(leftBackParams),
                 new ServoCoaxialWheel(rightBack,
                         hardwareMap.get(DcMotorEx.class,PARAMS.unitNames[3]),
                         hardwareMap.get(Servo.class,PARAMS.unitNames[3]+"Servo"),
                         new EnhancedAngleSensor(
-                                hardwareMap,PARAMS.unitNames[3]+"Analog",0
+                                hardwareMap,PARAMS.unitNames[3]+"Analog",3.217
                         )).setPARAMS(rightBackParams)
         );
     }
