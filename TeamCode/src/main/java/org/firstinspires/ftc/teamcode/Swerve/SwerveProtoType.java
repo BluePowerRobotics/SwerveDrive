@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.Swerve;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
@@ -33,8 +35,12 @@ public class SwerveProtoType extends LinearOpMode {
             telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
             telemetry.addData("x,y", RobotPosition.getInstance().getData().getPosition(DistanceUnit.INCH).toString());
             telemetry.addData("heading", RobotPosition.getInstance().getData().headingRadian);
-            telemetry.addData("targetHeading",swerveDrive.swerveController.getAutoLockHeading());
+            telemetry.addData("targetHeading",swerveDrive.swerveController.getHeadingLockRadian());
             telemetry.update();
+            TelemetryPacket packet = new TelemetryPacket();
+            packet.fieldOverlay().setStroke("#3F51B5");
+            Drawing.drawRobot(packet.fieldOverlay(), RobotPosition.getInstance().getData().getPose2d());
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
         }
     }
 }
