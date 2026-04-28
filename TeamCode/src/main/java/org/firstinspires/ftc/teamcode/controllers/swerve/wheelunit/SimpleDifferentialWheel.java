@@ -122,6 +122,7 @@ public class SimpleDifferentialWheel implements WheelUnit{
 
     @Override
     public double getHeading() {
+        getAngularVelocity();
         return readWheelHeading;
     }
     boolean firstGetHeading = true;
