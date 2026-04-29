@@ -5,17 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 
-public class AngleSensor {
-    double ZeroDegreeVoltage=0;
-    public AngleSensor(HardwareMap hardwareMap, String deviceName, double ZeroDegreeVoltage){
-        analogInput = hardwareMap.get(AnalogInput.class,deviceName);
-        this.ZeroDegreeVoltage=ZeroDegreeVoltage;
-    }
-    AnalogInput analogInput;
-    public double getVoltage(){
-        return analogInput.getVoltage();
-    }
-    public double getRadian(){
-        return MathSolver.normalizeAngle((getVoltage()-ZeroDegreeVoltage)/3.3*Math.PI*2);
-    }
+public interface AngleSensor {
+    public double getVoltage();
+    public double getRadian();
 }

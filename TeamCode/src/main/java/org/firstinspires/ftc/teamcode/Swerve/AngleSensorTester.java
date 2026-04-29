@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.controllers.AngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
+import org.firstinspires.ftc.teamcode.controllers.SimpleAngleSensor;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.utility.MathSolver;
 
@@ -21,13 +22,13 @@ public class AngleSensorTester extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
-        AngleSensor leftFront = new AngleSensor(
+        AngleSensor leftFront = new SimpleAngleSensor(
                 hardwareMap,PARAMS.unitNames[0]+"Analog",0
-        ),leftBack = new AngleSensor(
+        ),leftBack = new SimpleAngleSensor(
                 hardwareMap,PARAMS.unitNames[1]+"Analog",0
-        ),rightFront = new AngleSensor(
+        ),rightFront = new SimpleAngleSensor(
                 hardwareMap,PARAMS.unitNames[2]+"Analog",0
-        ),rightBack = new AngleSensor(
+        ),rightBack = new SimpleAngleSensor(
                 hardwareMap,PARAMS.unitNames[3]+"Analog",0
         );
 

@@ -347,9 +347,37 @@ y_2
     public static double avg(Number... numbers){
         if (numbers.length == 0) return 0.0;
         double sum = 0;
-        for (Number aDouble : numbers) {
-            sum = sum + (double) aDouble;
+        for (Number aNumber : numbers) {
+            sum = sum + (double) aNumber;
         }
         return sum / numbers.length;
+    }
+    public static double max(double... doubles){
+        double max = Double.NEGATIVE_INFINITY;
+        for(double aDouble : doubles){
+            max = Math.max(max,aDouble);
+        }
+        return max;
+    }
+    public static double max(Number... numbers){
+        double max = Double.NEGATIVE_INFINITY;
+        for(Number aNumber : numbers){
+            max = Math.max(max,(double)aNumber);
+        }
+        return max;
+    }
+    public static double min(double... doubles){
+        double min = Double.POSITIVE_INFINITY;
+        for(double aDouble : doubles){
+            min = Math.min(min,aDouble);
+        }
+        return min;
+    }
+    public static double min(Number... numbers){
+        double min = Double.POSITIVE_INFINITY;
+        for(Number aNumber : numbers){
+            min = Math.min(min,(double)aNumber);
+        }
+        return min;
     }
 }
