@@ -12,6 +12,7 @@ public interface WheelUnit {
     public double getSpeed();
     public double getVelocityInTPS();
     public double getHeading();
+    public double getAngularVelocity();
     public void update();
     public void stop();
 }

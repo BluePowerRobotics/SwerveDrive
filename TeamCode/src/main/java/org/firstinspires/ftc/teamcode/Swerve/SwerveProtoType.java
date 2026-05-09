@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.controllers.InstanceTelemetry;
 import org.firstinspires.ftc.teamcode.controllers.swerve.SwerveDrive;
 import org.firstinspires.ftc.teamcode.controllers.swerve.locate.RobotPosition;
+import org.firstinspires.ftc.teamcode.controllers.swerve.wheelunit.ServoCoaxialWheel;
 
 @TeleOp
 public class SwerveProtoType extends LinearOpMode {
@@ -30,6 +31,12 @@ public class SwerveProtoType extends LinearOpMode {
             for(int index = 0; index<swerveDrive.swerveController.wheelUnits.length;index++){
                 telemetry.addData(index+"Heading",swerveDrive.swerveController.wheelUnits[index].getHeading());
                 telemetry.addData(index+"Speed",swerveDrive.swerveController.wheelUnits[index].getSpeed());
+                telemetry.addData(index +"angularVelocity",swerveDrive.swerveController.wheelUnits[index].getAngularVelocity());
+                if(swerveDrive.swerveController.wheelUnits[index] instanceof ServoCoaxialWheel){
+                    ServoCoaxialWheel wheel = (ServoCoaxialWheel) swerveDrive.swerveController.wheelUnits[index];
+                    telemetry.addData(index+"motorVelocity",wheel.motorVelocity);
+                    telemetry.addData(index+"outputVoltage",wheel.outputVoltage);
+                }
             }
             telemetry.addData("AutoLockHeading",swerveDrive.swerveController.getAutoLockHeading());
             telemetry.addData("NoHeadMode",swerveDrive.swerveController.getUseNoHeadMode());
