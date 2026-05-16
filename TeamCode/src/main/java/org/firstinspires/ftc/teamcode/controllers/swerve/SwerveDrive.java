@@ -216,6 +216,7 @@ public class SwerveDrive {
         public final IMU imu;
         public DriveLocalizer(Pose2d initialPose){
             imu = lazyImu.get();
+            imu.resetYaw();
             position = MathSolver.toPoint2D(initialPose);
             startRadian = initialPose.heading.log();
             headingRadian = startRadian;
@@ -224,6 +225,7 @@ public class SwerveDrive {
         @Override
         public void setPose(Pose2d pose) {
             position = MathSolver.toPoint2D(pose);
+            imu.resetYaw();
             startRadian = MathSolver.normalizeAngle(pose.heading.log()-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
             headingRadian = pose.heading.log();
         }
