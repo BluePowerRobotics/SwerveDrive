@@ -22,6 +22,7 @@ public class SwerveProtoType extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry = InstanceTelemetry.init(telemetry);
         SwerveDrive swerveDrive = new SwerveDrive(hardwareMap);
+        swerveDrive.swerveController.setAutoLockHeading(false);
         waitForStart();
         while(opModeIsActive()){
             swerveDrive.swerveController.gamepadInput(gamepad1.left_stick_x,-gamepad1.left_stick_y,-gamepad1.right_stick_x);
